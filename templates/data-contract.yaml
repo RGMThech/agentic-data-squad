@@ -1,0 +1,41 @@
+# Data contract — copie para contracts/<nome_da_tabela>.yaml
+tabela: slv_dominio__entidade
+versao: 1.0.0                 # semver: major = mudança incompatível
+camada: silver                # bronze | silver | gold
+dominio: dominio
+descricao: <propósito de negócio da tabela>
+owner: <time ou pessoa responsável>
+spec: specs/NNN-slug/spec.md
+grao: <1 linha por ...>
+chave: [entidade_id]
+particionamento: [referencia_dt]
+retencao_dias: 1825
+
+sla:
+  frescor: 24h                # tempo máximo desde a última carga
+  horario_disponivel: "06:00"
+
+colunas:
+  - nome: entidade_id
+    tipo: string
+    nulo: false
+    descricao: Identificador único da entidade na origem
+    classificacao: publico     # publico | pessoal | sensivel | anonimizado
+    pii: false
+  - nome: referencia_dt
+    tipo: date
+    nulo: false
+    descricao: Data de referência do registro
+    classificacao: publico
+    pii: false
+  - nome: valor_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Valor monetário em reais
+    classificacao: publico
+    pii: false
+    min: 0
+
+qualidade:
+  variacao_volume_pc: 30      # alerta se o volume variar mais que isso entre execuções
+  regras_adicionais: []

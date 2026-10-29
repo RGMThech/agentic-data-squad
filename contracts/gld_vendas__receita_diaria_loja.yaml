@@ -1,0 +1,66 @@
+tabela: gld_vendas__receita_diaria_loja
+versao: 1.0.0
+camada: gold
+dominio: vendas
+descricao: Receita, descontos, pedidos e ticket médio por loja e dia, sem pedidos cancelados
+owner: Operador
+spec: specs/000-exemplo-receita-diaria/spec.md
+grao: 1 linha por loja por dia com pelo menos um pedido válido
+chave: [loja_cd, venda_dt]
+particionamento: [venda_dt]
+retencao_dias: 730
+
+sla:
+  frescor: 24h
+  horario_disponivel: "06:00"
+
+colunas:
+  - nome: loja_cd
+    tipo: string
+    nulo: false
+    descricao: Código da loja que registrou a venda
+    classificacao: publico
+    pii: false
+  - nome: venda_dt
+    tipo: date
+    nulo: false
+    descricao: Data em que os pedidos foram feitos
+    classificacao: publico
+    pii: false
+  - nome: pedidos_qt
+    tipo: bigint
+    nulo: false
+    descricao: Quantidade de pedidos válidos no dia (M-03)
+    classificacao: publico
+    pii: false
+    min: 1
+  - nome: receita_bruta_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Soma dos valores antes do desconto (M-01)
+    classificacao: publico
+    pii: false
+    min: 0
+  - nome: desconto_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Soma dos descontos concedidos
+    classificacao: publico
+    pii: false
+    min: 0
+  - nome: receita_liquida_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Receita bruta menos descontos (M-02)
+    classificacao: publico
+    pii: false
+  - nome: ticket_medio_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Receita líquida dividida pela quantidade de pedidos (M-04)
+    classificacao: publico
+    pii: false
+    min: 0
+
+qualidade:
+  variacao_volume_pc: 30

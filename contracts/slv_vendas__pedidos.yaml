@@ -1,0 +1,84 @@
+tabela: slv_vendas__pedidos
+versao: 1.0.0
+camada: silver
+dominio: vendas
+descricao: Pedidos de venda do ERP, uma linha por pedido na versão mais recente recebida
+owner: Operador
+spec: specs/000-exemplo-receita-diaria/spec.md
+grao: 1 linha por pedido
+chave: [pedido_id]
+particionamento: [pedido_dt]
+retencao_dias: 730
+
+sla:
+  frescor: 2h
+  horario_disponivel: "05:00"
+
+colunas:
+  - nome: pedido_id
+    tipo: string
+    nulo: false
+    descricao: Identificador do pedido no ERP
+    classificacao: publico
+    pii: false
+  - nome: loja_cd
+    tipo: string
+    nulo: false
+    descricao: Código da loja que registrou a venda
+    classificacao: publico
+    pii: false
+    referencia: dim_lojas.loja_cd
+  - nome: cliente_id
+    tipo: string
+    nulo: true
+    descricao: Pseudônimo do cliente atribuído pelo ERP
+    classificacao: pessoal
+    pii: true
+  - nome: pedido_ts
+    tipo: timestamp
+    nulo: false
+    descricao: Momento em que o pedido foi feito, no fuso America/Sao_Paulo
+    classificacao: publico
+    pii: false
+  - nome: pedido_dt
+    tipo: date
+    nulo: false
+    descricao: Data da venda derivada do momento do pedido (RN-03)
+    classificacao: publico
+    pii: false
+  - nome: status_cd
+    tipo: string
+    nulo: false
+    descricao: Situação do pedido no ERP
+    classificacao: publico
+    pii: false
+    valores_aceitos: [PAGO, PENDENTE, CANCELADO]
+  - nome: cancelado_fl
+    tipo: boolean
+    nulo: false
+    descricao: Verdadeiro quando a versão mais recente do pedido está cancelada
+    classificacao: publico
+    pii: false
+  - nome: valor_bruto_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Valor do pedido antes de descontos, em reais
+    classificacao: publico
+    pii: false
+    min: 0
+  - nome: desconto_vl
+    tipo: decimal(18,2)
+    nulo: false
+    descricao: Desconto concedido no pedido, em reais
+    classificacao: publico
+    pii: false
+    min: 0
+  - nome: _ingestao_ts
+    tipo: timestamp
+    nulo: false
+    descricao: Momento em que esta versão do pedido chegou à bronze
+    classificacao: publico
+    pii: false
+
+qualidade:
+  variacao_volume_pc: 30

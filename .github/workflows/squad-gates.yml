@@ -1,0 +1,35 @@
+name: squad-gates
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  harness:
+    name: Harness (naming, contratos, gates, testes)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instalar dependências
+        run: pip install -r requirements-dev.txt
+
+      - name: Convenção de nomes
+        run: python scripts/validate_naming.py
+
+      - name: Data contracts
+        run: python scripts/check_contracts.py
+
+      - name: Gates G1/G2
+        run: python scripts/check_spec.py
+
+      - name: Testes (unitários + casos de ouro + contrato)
+        run: pytest -q
+
+  # PLATAFORMA: adicione aqui o deploy para dev/homologação após merge e,
+  # para produção, um job com `environment: producao` exigindo aprovação manual (G3).

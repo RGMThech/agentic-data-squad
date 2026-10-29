@@ -1,0 +1,47 @@
+# Camada semântica — domínio vendas
+# Uma única definição por métrica no repositório inteiro.
+# PLATAFORMA: traduza para a sua ferramenta (Power BI/DAX, dbt Semantic Layer, LookML, Cube...).
+metricas:
+  - id: M-01
+    nome: receita_bruta
+    rotulo: Receita bruta
+    descricao: Soma do valor dos pedidos válidos antes do desconto
+    origem: gld_vendas__receita_diaria_loja
+    expressao: SUM(receita_bruta_vl)
+    formato: moeda_brl
+    dimensoes: [loja_cd, venda_dt]
+    dono: Diretoria Comercial
+    spec: specs/000-exemplo-receita-diaria/spec.md
+
+  - id: M-02
+    nome: receita_liquida
+    rotulo: Receita líquida
+    descricao: Receita bruta menos descontos, sem pedidos cancelados
+    origem: gld_vendas__receita_diaria_loja
+    expressao: SUM(receita_liquida_vl)
+    formato: moeda_brl
+    dimensoes: [loja_cd, venda_dt]
+    dono: Diretoria Comercial
+    spec: specs/000-exemplo-receita-diaria/spec.md
+
+  - id: M-03
+    nome: pedidos
+    rotulo: Pedidos
+    descricao: Quantidade de pedidos válidos
+    origem: gld_vendas__receita_diaria_loja
+    expressao: SUM(pedidos_qt)
+    formato: inteiro
+    dimensoes: [loja_cd, venda_dt]
+    dono: Diretoria Comercial
+    spec: specs/000-exemplo-receita-diaria/spec.md
+
+  - id: M-04
+    nome: ticket_medio
+    rotulo: Ticket médio
+    descricao: Receita líquida por pedido. Recalculado na agregação, nunca média de médias
+    origem: gld_vendas__receita_diaria_loja
+    expressao: SUM(receita_liquida_vl) / NULLIF(SUM(pedidos_qt), 0)
+    formato: moeda_brl
+    dimensoes: [loja_cd, venda_dt]
+    dono: Diretoria Comercial
+    spec: specs/000-exemplo-receita-diaria/spec.md

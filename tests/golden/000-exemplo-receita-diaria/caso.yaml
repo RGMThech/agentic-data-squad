@@ -1,0 +1,11 @@
+# Caso de ouro da feature 000
+descricao: Receita diária por loja com cancelamento posterior, reenvio com correção e desconto nulo
+pipelines:                       # executados nesta ordem sobre as tabelas de input/
+  - pipelines/silver/vendas/slv_vendas__pedidos.sql
+  - pipelines/gold/vendas/gld_vendas__receita_diaria_loja.sql
+cenarios:
+  - P003 cancelado → fora (RN-01, CA-01)
+  - P004 reenviado com desconto 40 → vale 40 (RN-02, CA-02)
+  - P007 pago e depois cancelado → fora do dia 02 (RN-01 + RN-02)
+  - P008 feito 23:50 do dia 02 e carregado dia 03 → conta no dia 02 (RN-03)
+  - P002 sem desconto (nulo) → tratado como 0

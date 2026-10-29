@@ -1,0 +1,10 @@
+.env
+.env.*
+secrets/
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+*.duckdb
+.DS_Store
+.claude/settings.local.json
