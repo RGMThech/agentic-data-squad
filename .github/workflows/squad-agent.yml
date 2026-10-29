@@ -39,9 +39,12 @@ jobs:
       ATOR: ${{ github.actor }}
       RUN_ID: ${{ github.run_id }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-      REGISTRO: ${{ runner.temp }}/registro.json
       GH_TOKEN: ${{ github.token }}
     steps:
+      # O contexto `runner` não existe no env do job; o caminho do registro é definido aqui.
+      - name: Preparar ambiente
+        run: echo "REGISTRO=${RUNNER_TEMP}/registro.json" >> "$GITHUB_ENV"
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
