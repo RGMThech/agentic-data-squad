@@ -1,6 +1,6 @@
 # Operando a squad pelo Squad Console
 
-O [Squad Console](https://github.com/mellrodrigo/agentic-squad-console) é a interface web desta squad: abre features, aciona agentes, aprova gates e mostra custos. Este repositório já vem preparado para ele.
+O [Squad Console](https://github.com/RGMThech/agentic-squad-console) é a interface web desta squad: abre features, aciona agentes, aprova gates e mostra custos. Este repositório já vem preparado para ele.
 
 ## Peças deste repositório que o console usa
 
@@ -37,6 +37,11 @@ O [Squad Console](https://github.com/mellrodrigo/agentic-squad-console) é a int
 - **G1 e G2:** o console grava `status: aprovado`, `aprovado_por` e `aprovado_em` no front matter da spec ou do design, na branch da feature. O `check_spec.py` confere se `aprovado_por` é um operador.
 - **G3:** o console marca o PR como pronto, registra a aprovação do operador e faz o merge (squash).
 
-## Segredo necessário
+## Configuração necessária no GitHub
 
-`ANTHROPIC_API_KEY` nos segredos do GitHub Actions do repositório. Pode ser cadastrado pelo console, em **Configuração → Chave da API**.
+- **Segredo:** `ANTHROPIC_API_KEY` nos segredos do GitHub Actions do repositório. Pode ser cadastrado pelo console, em **Configuração → Chave da API**.
+- **Permissão do Actions:** na organização (ou no repositório), em **Settings → Actions → General → Workflow permissions**:
+  - marque **Read and write permissions**
+  - marque **Allow GitHub Actions to create and approve pull requests**
+
+  Sem isso, o workflow não consegue abrir o PR da feature.

@@ -70,7 +70,7 @@ Veja um exemplo completo em [`specs/000-exemplo-receita-diaria/`](specs/000-exem
 
 ## Operando pelo Squad Console
 
-Esta squad pode ser comandada pela web pelo [Squad Console](https://github.com/mellrodrigo/agentic-squad-console). Pelo console você:
+Esta squad pode ser comandada pela web pelo [Squad Console](https://github.com/RGMThech/agentic-squad-console). Pelo console você:
 - abre features
 - aciona agentes (eles rodam no GitHub Actions)
 - aprova os gates G1, G2 e G3
