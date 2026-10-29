@@ -1,8 +1,9 @@
 # Configuração da squad — lida pelo Console e pelo workflow squad-agent
 nome: Agentic Data Squad
-cliente: NTT DATA
+cliente: RGM Tech
 descricao: Template de squad agêntica de Data Analytics
 plataforma: agnostico        # agnostico | databricks | snowflake | bigquery | fabric | dbt
 modelo: sonnet               # sonnet | opus | haiku (ou id completo do modelo)
 max_turnos: 60               # limite de turnos por execução de agente
 alerta_custo_usd: 5          # o console destaca execuções acima deste valor
+console_bot: ''               # login do bot do GitHub App do Squad Console (ex.: squad-console[bot]); preenchido pelo console

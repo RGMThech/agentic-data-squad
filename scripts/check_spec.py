@@ -34,7 +34,7 @@ def checar_aprovacao(rel, fm) -> list[str]:
         erros.append(f"{rel}: status aprovado exige aprovado_por e aprovado_em (G = Operador)")
         return erros
     ops = operadores()
-    if ops and fm.get("exemplo") != "true" and fm["aprovado_por"].lstrip("@") not in ops:
+    if ops and fm.get("exemplo") != "true" and fm["aprovado_por"].strip().lstrip("@").lower() not in ops:
         erros.append(f"{rel}: aprovado_por '{fm['aprovado_por']}' não é operador em .squad/members.yaml")
     return erros
 
@@ -49,7 +49,7 @@ def operadores() -> set[str]:
     except ImportError:
         return set()
     dados = yaml.safe_load(caminho.read_text(encoding="utf-8")) or {}
-    return {str(o) for o in (dados.get("operadores") or [])}
+    return {str(o).strip().lstrip("@").lower() for o in (dados.get("operadores") or [])}
 
 
 def main() -> int:

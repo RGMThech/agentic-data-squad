@@ -46,24 +46,50 @@ def _falhar(msg: str) -> None:
     sys.exit(1)
 
 
+def _norm(v: str) -> str:
+    return str(v or "").strip().lstrip("@").lower()
+
+
+def quem_acionou() -> str:
+    """Identidade validada de quem pediu a execução.
+
+    - Disparo pelo Squad Console: o ator do GitHub é o bot do GitHub App
+      (`console_bot` em .squad/squad.yaml); quem pediu vem em SOLICITANTE (e-mail).
+    - Disparo manual na aba Actions: vale o login de quem disparou; SOLICITANTE é ignorado.
+    """
+    ator = _norm(os.environ.get("ATOR", ""))
+    bot = _norm(_yaml(ROOT / ".squad" / "squad.yaml").get("console_bot", ""))
+    if bot and ator == bot:
+        solicitante = _norm(os.environ.get("SOLICITANTE", ""))
+        if not solicitante:
+            _falhar("Execução do console sem solicitante.")
+        return solicitante
+    return ator
+
+
 def validar() -> None:
-    agente, feature, ator = os.environ["AGENTE"], os.environ["FEATURE"], os.environ["ATOR"]
+    agente, feature = os.environ["AGENTE"], os.environ["FEATURE"]
     if not re.fullmatch(r"[a-z][a-z-]+", agente) or not (ROOT / ".claude" / "agents" / f"{agente}.md").exists():
         _falhar(f"Agente desconhecido: {agente}")
     if not RE_FEATURE.match(feature):
         _falhar(f"Feature inválida: {feature} (use NNN-slug)")
+    quem = quem_acionou()
     membros = _yaml(ROOT / ".squad" / "members.yaml")
-    autorizados = set(membros.get("operadores") or []) | set(membros.get("membros") or [])
-    if autorizados and ator not in autorizados:
-        _falhar(f"@{ator} não é operador nem membro desta squad (.squad/members.yaml)")
-    print(f"ok: {agente} · {feature} · @{ator}")
+    autorizados = {_norm(x) for x in (membros.get("operadores") or []) + (membros.get("membros") or [])}
+    if autorizados and quem not in autorizados:
+        _falhar(f"{quem} não é operador nem membro desta squad (.squad/members.yaml)")
+    env_file = os.environ.get("GITHUB_ENV")
+    if env_file:
+        with open(env_file, "a", encoding="utf-8") as f:
+            f.write(f"QUEM={quem}\n")
+    print(f"ok: {agente} · {feature} · {quem}")
 
 
 def _prompt(agente: str, feature: str, instrucao: str, ator: str) -> str:
     return f"""Você está executando como o agente `{agente}` da squad, de forma não interativa (GitHub Actions).
 
 Feature: specs/{feature}/   (branch atual: squad/{feature})
-Acionado por: @{ator}, pelo Console da Squad.
+Acionado por: {ator}.
 
 ## Instrução
 {instrucao}
@@ -98,7 +124,8 @@ def _ler_resultado(stdout: str) -> dict:
 
 def executar() -> None:
     agente, feature = os.environ["AGENTE"], os.environ["FEATURE"]
-    instrucao, ator = os.environ.get("INSTRUCAO", "").strip(), os.environ["ATOR"]
+    instrucao = os.environ.get("INSTRUCAO", "").strip()
+    ator = os.environ.get("QUEM") or os.environ["ATOR"]
     registro_path = Path(os.environ["REGISTRO"])
     squad = _yaml(ROOT / ".squad" / "squad.yaml")
 
@@ -154,7 +181,7 @@ def comentario() -> None:
     print(f"<!-- {MARCADOR} {json.dumps(meta, ensure_ascii=False)} -->")
     print(f"### {icone} `{reg['agente']}` — {reg['status']}")
     print(
-        f"**Acionado por:** @{reg['ator']} · **Custo:** US$ {reg['custo_usd']:.2f} · "
+        f"**Acionado por:** {reg['ator']} · **Custo:** US$ {reg['custo_usd']:.2f} · "
         f"**Turnos:** {reg.get('turnos') or '-'} · **Duração:** {minutos}m{segundos:02d}s · "
         f"**Validadores:** {reg['validadores']} · [logs]({reg['run_url']})"
     )

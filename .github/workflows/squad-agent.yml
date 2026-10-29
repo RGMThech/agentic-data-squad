@@ -1,5 +1,5 @@
 name: squad-agent
-run-name: "${{ inputs.agente }} · ${{ inputs.feature }} · @${{ github.actor }}"
+run-name: "${{ inputs.agente }} · ${{ inputs.feature }} · ${{ inputs.solicitante || format('@{0}', github.actor) }}"
 
 # Acionado pelo Console da Squad (ou manualmente na aba Actions).
 on:
@@ -16,6 +16,10 @@ on:
       instrucao:
         description: Instrução para o agente
         required: true
+        type: string
+      solicitante:
+        description: E-mail de quem pediu (preenchido pelo Squad Console; ignorado em disparo manual)
+        required: false
         type: string
 
 permissions:
@@ -37,6 +41,7 @@ jobs:
       FEATURE: ${{ inputs.feature }}
       INSTRUCAO: ${{ inputs.instrucao }}
       ATOR: ${{ github.actor }}
+      SOLICITANTE: ${{ inputs.solicitante }}
       RUN_ID: ${{ github.run_id }}
       RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
       GH_TOKEN: ${{ github.token }}

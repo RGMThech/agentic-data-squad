@@ -6,19 +6,19 @@ O [Squad Console](https://github.com/RGMThech/agentic-squad-console) é a interf
 
 | Arquivo | Papel |
 |---------|-------|
-| `.squad/squad.yaml` | Nome, cliente, plataforma, modelo dos agentes, limite de turnos e alerta de custo |
-| `.squad/members.yaml` | Quem é operador, membro ou leitor (logins do GitHub) |
+| `.squad/squad.yaml` | Nome, cliente, plataforma, modelo dos agentes, limite de turnos, alerta de custo e `console_bot` (o bot do GitHub App do console) |
+| `.squad/members.yaml` | Quem é operador, membro ou leitor: e-mails das contas do console (ou logins do GitHub, para disparo manual) |
 | `.github/workflows/squad-agent.yml` | Executa um agente em modo não interativo quando o console pede |
 | `scripts/squad_run.py` | Valida o pedido, roda o Claude Code como o agente e registra custo e turnos |
 | `.github/workflows/squad-gates.yml` | Checagens do harness; também é disparado após cada execução |
 
 ## O que acontece quando o console aciona um agente
 
-1. **Disparo.** O console chama o workflow `squad-agent` com `agente`, `feature` e `instrucao`.
+1. **Disparo.** O console, pelo GitHub App da organização, chama o workflow `squad-agent` com `agente`, `feature`, `instrucao` e `solicitante` (o e-mail de quem pediu).
 2. **Validação.** `squad_run.py validar` confere três coisas:
    - o agente existe em `.claude/agents/`
    - a feature segue o padrão `NNN-slug`
-   - quem acionou é operador ou membro em `.squad/members.yaml`
+   - quem pediu é operador ou membro em `.squad/members.yaml`. Quando o disparo vem do console (o ator do GitHub é o `console_bot`), vale o e-mail informado em `solicitante`. Num disparo manual pela aba Actions, vale o login do GitHub de quem disparou, e o `solicitante` é ignorado.
 3. **Branch.** O workflow troca para a branch `squad/<feature>`, ou cria se ela não existir.
 4. **Execução.** O Claude Code roda com:
    - o prompt do agente anexado ao system prompt
@@ -34,7 +34,7 @@ O [Squad Console](https://github.com/RGMThech/agentic-squad-console) é a interf
 
 ## Gates pelo console
 
-- **G1 e G2:** o console grava `status: aprovado`, `aprovado_por` e `aprovado_em` no front matter da spec ou do design, na branch da feature. O `check_spec.py` confere se `aprovado_por` é um operador.
+- **G1 e G2:** o console grava `status: aprovado`, `aprovado_por` (o e-mail do operador) e `aprovado_em` no front matter da spec ou do design, na branch da feature. O `check_spec.py` confere se `aprovado_por` é um operador.
 - **G3:** o console marca o PR como pronto, registra a aprovação do operador e faz o merge (squash).
 
 ## Configuração necessária no GitHub

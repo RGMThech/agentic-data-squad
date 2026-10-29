@@ -1,11 +1,11 @@
-# Papéis na squad (logins do GitHub).
+# Papéis na squad. Use e-mails (contas do Squad Console) ou logins do GitHub.
+# O Squad Console administra este arquivo em Configuração → Equipe e papéis.
 #
 # operadores: aprovam gates G1/G2/G3, fazem merge, alteram configuração e segredos
 # membros:    abrem pedidos e acionam agentes
 # leitores:   só visualizam
 #
-# Quem tem acesso ao repositório mas não está listado é tratado como leitor.
-# Se a lista de operadores estiver vazia, administradores do repositório são operadores.
+# Se a lista de operadores estiver vazia, administradores do console atuam como operadores.
 operadores:
   - mellrodrigo
 membros: []
