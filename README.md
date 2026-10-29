@@ -68,6 +68,16 @@ Veja um exemplo completo em [`specs/000-exemplo-receita-diaria/`](specs/000-exem
 
 ---
 
+## Operando pelo Squad Console
+
+Esta squad pode ser comandada pela web pelo [Squad Console](https://github.com/mellrodrigo/agentic-squad-console). Pelo console você:
+- abre features
+- aciona agentes (eles rodam no GitHub Actions)
+- aprova os gates G1, G2 e G3
+- acompanha custos por execução
+
+Os papéis ficam em `.squad/members.yaml` e a configuração da squad em `.squad/squad.yaml`. Veja [`docs/console.md`](docs/console.md).
+
 ## Validadores do harness
 
 | Script | O que garante |

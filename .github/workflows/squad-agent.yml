@@ -1,0 +1,132 @@
+name: squad-agent
+run-name: "${{ inputs.agente }} · ${{ inputs.feature }} · @${{ github.actor }}"
+
+# Acionado pelo Console da Squad (ou manualmente na aba Actions).
+on:
+  workflow_dispatch:
+    inputs:
+      agente:
+        description: Agente a executar (nome de um arquivo em .claude/agents)
+        required: true
+        type: string
+      feature:
+        description: Feature no formato NNN-slug
+        required: true
+        type: string
+      instrucao:
+        description: Instrução para o agente
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: squad-${{ inputs.feature }}
+  cancel-in-progress: false
+
+jobs:
+  agente:
+    name: Agente
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      AGENTE: ${{ inputs.agente }}
+      FEATURE: ${{ inputs.feature }}
+      INSTRUCAO: ${{ inputs.instrucao }}
+      ATOR: ${{ github.actor }}
+      RUN_ID: ${{ github.run_id }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      REGISTRO: ${{ runner.temp }}/registro.json
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Dependências
+        run: |
+          pip install -q -r requirements-dev.txt
+          npm install -g @anthropic-ai/claude-code
+
+      - name: Validar pedido
+        run: python scripts/squad_run.py validar
+
+      - name: Preparar branch da feature
+        run: |
+          git config user.name "squad-agent[bot]"
+          git config user.email "squad-agent@users.noreply.github.com"
+          BRANCH="squad/${FEATURE}"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git switch "$BRANCH"
+          else
+            git switch -c "$BRANCH"
+          fi
+          echo "BRANCH=$BRANCH" >> "$GITHUB_ENV"
+
+      - name: Executar agente
+        id: executar
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/squad_run.py executar
+
+      - name: Validadores do harness
+        id: validadores
+        if: always() && steps.executar.outcome != 'skipped'
+        run: |
+          if python scripts/validate_naming.py && python scripts/check_contracts.py && python scripts/check_spec.py; then
+            echo "VALIDADORES=ok" >> "$GITHUB_ENV"
+          else
+            echo "VALIDADORES=falhou" >> "$GITHUB_ENV"
+          fi
+
+      - name: Commit e push
+        if: always() && steps.executar.outcome != 'skipped'
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nenhuma alteração para commitar."
+          else
+            git commit -q -m "squad(${AGENTE}): ${FEATURE} — execução ${RUN_ID}"
+          fi
+          git push -q origin "HEAD:${BRANCH}"
+
+      - name: Pull Request e registro da execução
+        if: always() && steps.executar.outcome != 'skipped'
+        run: |
+          if [ "$(git rev-list --count origin/main..HEAD)" = "0" ]; then
+            echo "Sem diferença para a main; PR não criado." >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          if [ -z "$PR" ]; then
+            printf '%s\n' \
+              "Feature \`${FEATURE}\` conduzida pela squad agêntica." "" \
+              "- Spec: \`specs/${FEATURE}/spec.md\`" \
+              "- Design: \`specs/${FEATURE}/design.md\`" \
+              "- Tarefas: \`specs/${FEATURE}/tasks.md\`" "" \
+              "Gates são aprovados pelo Operador no Console da Squad. O merge deste PR é o **G3**." > "$RUNNER_TEMP/pr.md"
+            gh pr create --draft --base main --head "$BRANCH" --title "[squad] ${FEATURE}" --body-file "$RUNNER_TEMP/pr.md"
+            PR=$(gh pr list --head "$BRANCH" --state open --json number --jq '.[0].number')
+          fi
+          if [ -f "$REGISTRO" ]; then
+            python scripts/squad_run.py comentario > "$RUNNER_TEMP/comentario.md"
+            gh pr comment "$PR" --body-file "$RUNNER_TEMP/comentario.md"
+            cat "$RUNNER_TEMP/comentario.md" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Disparar checagens dos gates
+        if: always() && steps.executar.outcome != 'skipped'
+        # Pushes feitos com o GITHUB_TOKEN não disparam outros workflows;
+        # workflow_dispatch é a exceção, então as checagens rodam no commit da branch.
+        run: gh workflow run squad-gates.yml --ref "$BRANCH" || true

@@ -6,6 +6,7 @@ status: aprovado
 solicitante: Diretoria Comercial
 aprovado_por: Operador
 aprovado_em: 2026-10-29
+exemplo: true
 tolerancia_reconciliacao_pc: 0
 ---
 

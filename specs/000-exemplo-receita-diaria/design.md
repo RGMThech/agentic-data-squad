@@ -5,6 +5,7 @@ versao: 1.0
 status: aprovado
 aprovado_por: Operador
 aprovado_em: 2026-10-29
+exemplo: true
 ---
 
 # Design — Receita diária por loja (exemplo)

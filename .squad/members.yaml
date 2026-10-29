@@ -1,0 +1,12 @@
+# Papéis na squad (logins do GitHub).
+#
+# operadores: aprovam gates G1/G2/G3, fazem merge, alteram configuração e segredos
+# membros:    abrem pedidos e acionam agentes
+# leitores:   só visualizam
+#
+# Quem tem acesso ao repositório mas não está listado é tratado como leitor.
+# Se a lista de operadores estiver vazia, administradores do repositório são operadores.
+operadores:
+  - mellrodrigo
+membros: []
+leitores: []

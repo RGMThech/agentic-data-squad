@@ -28,9 +28,28 @@ def duvidas_abertas(texto: str) -> list[str]:
 
 def checar_aprovacao(rel, fm) -> list[str]:
     erros = []
-    if fm.get("status") == "aprovado" and (not fm.get("aprovado_por") or not fm.get("aprovado_em")):
+    if fm.get("status") != "aprovado":
+        return erros
+    if not fm.get("aprovado_por") or not fm.get("aprovado_em"):
         erros.append(f"{rel}: status aprovado exige aprovado_por e aprovado_em (G = Operador)")
+        return erros
+    ops = operadores()
+    if ops and fm.get("exemplo") != "true" and fm["aprovado_por"].lstrip("@") not in ops:
+        erros.append(f"{rel}: aprovado_por '{fm['aprovado_por']}' não é operador em .squad/members.yaml")
     return erros
+
+
+def operadores() -> set[str]:
+    """Operadores declarados em .squad/members.yaml (vazio = sem checagem de papel)."""
+    caminho = ROOT / ".squad" / "members.yaml"
+    if not caminho.exists():
+        return set()
+    try:
+        import yaml
+    except ImportError:
+        return set()
+    dados = yaml.safe_load(caminho.read_text(encoding="utf-8")) or {}
+    return {str(o) for o in (dados.get("operadores") or [])}
 
 
 def main() -> int:
