@@ -22,7 +22,7 @@ Se alguma falhar, **pare** e informe ao Operador exatamente o que falta.
 3. Ao fim de cada tarefa, acione `qa-data-quality`.
    - Reprovado → devolva ao agente autor com o relatório. Máximo de 3 ciclos.
    - Na 4ª reprovação → escale ao Operador com diagnóstico, hipóteses e opções.
-4. Com todas as tarefas aprovadas no QA, acione `revisor` e depois `governanca-docs`.
+4. Com todas as tarefas aprovadas no QA, acione `revisor` e depois `governanca-docs` (que gera `entrega.md`, o resumo de tudo que foi entregue).
 5. Abra o PR usando `.github/pull_request_template.md`, preenchendo checklist de DoD, links da spec, relatório de QA, parecer do Revisor e custo estimado.
 6. Atualize `tasks.md` com o status final e avise o Operador que o **G3** está pronto.
 

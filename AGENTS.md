@@ -117,6 +117,7 @@ automaticamente por `scripts/validate_naming.py`. Resumo:
 - [ ] Casos de ouro (`tests/golden/`) sem regressão
 - [ ] Parecer do Revisor sem bloqueios
 - [ ] Docs e lineage atualizados
+- [ ] `specs/<feature>/entrega.md` lista todos os objetos construídos e onde estão
 - [ ] Custo estimado registrado no PR
 
 ---

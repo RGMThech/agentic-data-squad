@@ -2,6 +2,7 @@
 tabela: slv_dominio__entidade
 versao: 1.0.0                 # semver: major = mudança incompatível
 camada: silver                # bronze | silver | gold
+local: dev_dominio.silver.slv_dominio__entidade   # onde a tabela está na plataforma (banco.schema.tabela)
 dominio: dominio
 descricao: <propósito de negócio da tabela>
 owner: <time ou pessoa responsável>
