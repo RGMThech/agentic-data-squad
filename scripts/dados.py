@@ -115,12 +115,13 @@ def config() -> dict:
         if os.environ.get("DATABRICKS_WAREHOUSE_ID"):
             conexao["warehouse_id"] = os.environ["DATABRICKS_WAREHOUSE_ID"]
     leitura = _lista(os.environ.get("DADOS_LEITURA") or os.environ.get("DATABRICKS_LEITURA") or d.get("leitura") or legado.get("leitura"))
-    escrita = str(os.environ.get("DADOS_ESCRITA") or os.environ.get("DATABRICKS_ESCRITA") or d.get("escrita") or legado.get("escrita") or "")
+    escritas = _lista(os.environ.get("DADOS_ESCRITA") or os.environ.get("DATABRICKS_ESCRITA") or d.get("escrita") or legado.get("escrita"))
     return {
         "plataforma": plataforma,
         "conexao": conexao,
         "leitura": leitura,
-        "escrita": escrita.strip().strip("`").lower(),
+        "escrita": escritas[0] if escritas else "",   # destino padrão (dbt)
+        "escritas": escritas,                          # todos os schemas de sandbox
         "dbt": str(d.get("dbt") or "").lower() in ("true", "sim", "1", "yes"),
     }
 
@@ -167,8 +168,12 @@ def _alvos_de_escrita(sql: str) -> list[str]:
     return alvos
 
 
-def validar_sql(sql: str, escrita: str) -> str:
-    """Devolve 'leitura' ou 'escrita'; levanta Erro se a instrução não for permitida."""
+def validar_sql(sql: str, escrita: str | list[str]) -> str:
+    """Devolve 'leitura' ou 'escrita'; levanta Erro se a instrução não for permitida.
+
+    `escrita` é o schema de sandbox ou a lista deles (ex.: bronze, silver e gold de um catálogo de dev).
+    """
+    permitidos = [e.strip().lower() for e in ([escrita] if isinstance(escrita, str) else escrita) if e and e.strip()]
     limpo = _sem_comentarios_e_literais(sql).strip().rstrip(";").strip()
     if not limpo:
         raise Erro("Instrução vazia.")
@@ -182,17 +187,19 @@ def validar_sql(sql: str, escrita: str) -> str:
     if primeira in LEITURA and not any(re.search(rf"\b{k}\b", upper) for k in VERBOS_ESCRITA):
         return "leitura"
     if primeira in ESCRITA or primeira in LEITURA:
-        if not escrita:
+        if not permitidos:
             raise Erro("Escrita bloqueada: não há sandbox configurada (dados.escrita em .squad/squad.yaml).")
         alvos = _alvos_de_escrita(limpo)
         if not alvos:
             raise Erro("Não consegui identificar o objeto alterado. Use nomes completos: banco.schema.tabela.")
         for a in alvos:
             partes = a.split(".")
-            if len(partes) < 3 and not (len(partes) == 2 and a == escrita):
+            if len(partes) < 3 and not (len(partes) == 2 and a in permitidos):
                 raise Erro(f"Use o nome completo banco.schema.objeto para escrever (recebi '{a}').")
-            if ".".join(partes[:2]) != escrita:
-                raise Erro(f"Escrita só é permitida em {escrita}. '{a}' está fora da sandbox da squad.")
+            if ".".join(partes[:2]) not in permitidos:
+                raise Erro(f"Escrita só é permitida em {', '.join(permitidos)}. '{a}' está fora da sandbox da squad. "
+                           "Para liberar outro schema, o Operador o cria na plataforma, concede as permissões e o inclui "
+                           "em Squad Console → Configuração → Acesso a dados → Escrita.")
         return "escrita"
     raise Erro(f"Tipo de instrução não permitido: {primeira}.")
 
@@ -786,7 +793,7 @@ def imprimir(r: Resultado, linhas: int) -> None:
 
 def rodar(p: Plataforma, sql: str, linhas: int) -> None:
     linhas = max(1, min(linhas, LIMITE_MAXIMO))
-    validar_sql(sql, p.c["escrita"])
+    validar_sql(sql, p.c["escritas"])
     imprimir(p.executar(sql, linhas), linhas)
 
 
@@ -839,7 +846,7 @@ def main(argv: list[str]) -> int:
                 "plataforma": c["plataforma"] or None,
                 "conexao": c["conexao"],
                 "leitura": c["leitura"],
-                "escrita": c["escrita"] or None,
+                "escrita": c["escritas"] or None,
                 "dbt": c["dbt"],
                 "credenciais": ("presentes" if cls and all(_segredo(s) for s in cls.segredos) else "ausentes"),
                 "faltando": cls(c).faltando() if cls else ["dados.plataforma em .squad/squad.yaml"],

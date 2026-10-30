@@ -67,6 +67,23 @@ GRANT USE SCHEMA, SELECT ON SCHEMA vendas.silver TO `<APP_ID>`;
 
 Não conceda `ALL PRIVILEGES`, nem permissões em catálogos de produção além de leitura, nem `MANAGE`.
 
+### Camadas em schemas separados (bronze, silver, gold)
+
+Se o design separa as camadas em schemas, crie-os você mesmo (os agentes não criam schemas) e libere cada um:
+
+```sql
+CREATE SCHEMA IF NOT EXISTS dev_vendas.bronze;
+CREATE SCHEMA IF NOT EXISTS dev_vendas.silver;
+CREATE SCHEMA IF NOT EXISTS dev_vendas.gold;
+
+GRANT USE CATALOG ON CATALOG dev_vendas TO `<APP_ID>`;
+GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA dev_vendas.bronze TO `<APP_ID>`;
+GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA dev_vendas.silver TO `<APP_ID>`;
+GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA dev_vendas.gold   TO `<APP_ID>`;
+```
+
+No console, em **Escrita**, informe os três separados por vírgula: `dev_vendas.bronze, dev_vendas.silver, dev_vendas.gold`. Mantenha as fontes fora dessa lista para que continuem somente leitura.
+
 ## 5. Cadastrar no Squad Console
 
 Squad Console → abra a squad → **Configuração** → card **Acesso a dados** → plataforma **Databricks**:

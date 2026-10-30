@@ -15,7 +15,7 @@ Os agentes podem consultar dados reais e testar pipelines em uma **sandbox**, us
 | O quê | Permissão |
 |-------|-----------|
 | Fontes (`dados.leitura`) | somente leitura |
-| Sandbox (`dados.escrita`, um `banco.schema`) | criar e alterar tabelas e views |
+| Sandbox (`dados.escrita`: um ou mais `banco.schema`) | criar e alterar tabelas e views |
 | Motor de consulta (warehouse, projeto de execução) | usar |
 | Produção | nada além de leitura nas fontes liberadas |
 

@@ -15,5 +15,5 @@ dados:
   plataforma: ''               # databricks | snowflake | bigquery | fabric
   conexao: {}                  # campos da plataforma (host, conta, projeto, servidor…), sem segredos
   leitura: []                  # bancos ou banco.schema que os agentes podem ler (ex.: [vendas, crm.silver])
-  escrita: ''                  # única sandbox onde os agentes podem escrever: banco.schema (ex.: squad_dev.agentes)
+  escrita: ''                  # sandbox onde os agentes podem escrever: banco.schema ou lista (ex.: [dev.bronze, dev.silver, dev.gold])
   dbt: false                   # true: o workflow instala o dbt e gera o profiles.yml (perfil "squad")

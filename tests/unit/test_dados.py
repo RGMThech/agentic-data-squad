@@ -95,6 +95,20 @@ def test_bloqueios(sql, trecho):
         dados.validar_sql(sql, ESCRITA)
 
 
+def test_varios_schemas_de_sandbox():
+    camadas = ["eleicoes2024.bronze", "eleicoes2024.silver", "eleicoes2024.gold"]
+    assert dados.validar_sql("CREATE TABLE eleicoes2024.silver.slv_x AS SELECT 1", camadas) == "escrita"
+    assert dados.validar_sql("CREATE SCHEMA IF NOT EXISTS eleicoes2024.bronze", camadas) == "escrita"
+    with pytest.raises(dados.Erro, match="fora da sandbox"):
+        dados.validar_sql("CREATE TABLE eleicoes2024.eleicoes.x AS SELECT 1", camadas)
+
+
+def test_escrita_em_lista_no_squad_yaml(monkeypatch):
+    usar(monkeypatch, {"dados": {"plataforma": "databricks", "escrita": ["E.Bronze", "e.silver"]}})
+    c = dados.config()
+    assert c["escritas"] == ["e.bronze", "e.silver"] and c["escrita"] == "e.bronze"
+
+
 def test_sem_sandbox_bloqueia_qualquer_escrita():
     with pytest.raises(dados.Erro, match="Escrita bloqueada"):
         dados.validar_sql("CREATE TABLE squad_dev.agentes.x AS SELECT 1", "")
