@@ -38,6 +38,8 @@ Portal de administração do Fabric → **Tenant settings** → **Developer sett
 3. **New item** → **Lakehouse** → nome `fontes` → **New shortcut** → aponte para as tabelas de origem que a squad pode ler (outros Lakehouses ou Warehouses do OneLake, ADLS, S3).
 4. **Manage access** → **Add people or groups** → o aplicativo `squad-<nome>` com o papel **Contributor**.
 
+Com o papel Contributor, os agentes também criam sozinhos os schemas de que precisarem no warehouse da sandbox (informe em Escrita só `squad_dev`).
+
 Assim a squad lê as fontes pelos atalhos e escreve só no próprio workspace. Não dê acesso de Contributor a workspaces de produção.
 
 **Dados pessoais (LGPD):** aponte os atalhos para tabelas mascaradas, ou use views sem as colunas pessoais. A máscara do script é só uma camada extra.

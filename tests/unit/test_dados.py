@@ -103,6 +103,21 @@ def test_varios_schemas_de_sandbox():
         dados.validar_sql("CREATE TABLE eleicoes2024.eleicoes.x AS SELECT 1", camadas)
 
 
+def test_catalogo_inteiro_agentes_criam_as_camadas_e_fonte_fica_protegida():
+    esc, fontes = ["eleicoes2024"], ["eleicoes2024.eleicoes"]
+    for sql in ("CREATE SCHEMA IF NOT EXISTS eleicoes2024.bronze",
+                "CREATE OR REPLACE TABLE eleicoes2024.bronze.brz_eleicoes__candidatos AS SELECT 1",
+                "CREATE VIEW eleicoes2024.gold.v AS SELECT * FROM eleicoes2024.silver.x",
+                "INSERT INTO eleicoes2024.silver.slv_eleicoes__votos SELECT * FROM eleicoes2024.bronze.y"):
+        assert dados.validar_sql(sql, esc, fontes) == "escrita"
+    for sql, trecho in (("CREATE TABLE eleicoes2024.eleicoes.x AS SELECT 1", "somente leitura"),
+                        ("DROP SCHEMA eleicoes2024.eleicoes CASCADE", "somente leitura"),
+                        ("CREATE SCHEMA producao.bronze", "fora da sandbox"),
+                        ("CREATE TABLE x AS SELECT 1", "nome completo")):
+        with pytest.raises(dados.Erro, match=trecho):
+            dados.validar_sql(sql, esc, fontes)
+
+
 def test_escrita_em_lista_no_squad_yaml(monkeypatch):
     usar(monkeypatch, {"dados": {"plataforma": "databricks", "escrita": ["E.Bronze", "e.silver"]}})
     c = dados.config()
@@ -459,6 +474,15 @@ def test_fabric_sem_driver(fabric, monkeypatch, capsys):
 
 
 # ----------------------------------------------------------------- dbt
+
+def test_dbt_com_catalogo_inteiro_usa_schema_squad(monkeypatch, tmp_path):
+    usar(monkeypatch, {"dados": {"plataforma": "databricks", "conexao": {"host": "https://x.cloud.databricks.com", "warehouse_id": "wh1"}, "escrita": "eleicoes2024", "dbt": True}})
+    monkeypatch.setenv("DATABRICKS_CLIENT_ID", "a")
+    monkeypatch.setenv("DATABRICKS_CLIENT_SECRET", "b")
+    assert dados.main(["dbt-profile", "--saida", str(tmp_path)]) == 0
+    perfil = json.loads((tmp_path / "profiles.yml").read_text().split("\n", 1)[1])["squad"]["outputs"]["sandbox"]
+    assert (perfil["catalog"], perfil["schema"]) == ("eleicoes2024", "squad")
+
 
 @pytest.mark.parametrize("raiz, segredos, tipo", [
     ({"plataforma": "databricks", "conexao": {"host": "https://x.cloud.databricks.com", "warehouse_id": "wh1"}}, {"DATABRICKS_CLIENT_ID": "a", "DATABRICKS_CLIENT_SECRET": "b"}, "databricks"),

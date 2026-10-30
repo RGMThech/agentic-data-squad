@@ -58,6 +58,12 @@ GRANT SELECT ON FUTURE TABLES IN SCHEMA VENDAS.SILVER TO ROLE SQUAD_ROLE;
 GRANT SELECT ON FUTURE VIEWS IN SCHEMA VENDAS.SILVER TO ROLE SQUAD_ROLE;
 ```
 
+**Para os agentes criarem as camadas sozinhos** (bronze, silver, gold…), conceda `CREATE SCHEMA` no database de trabalho e informe em Escrita só `SQUAD_DEV`:
+
+```sql
+GRANT USAGE, CREATE SCHEMA ON DATABASE SQUAD_DEV TO ROLE SQUAD_ROLE;
+```
+
 **Custo:** para um teto mensal, crie um *resource monitor* e associe ao `SQUAD_WH`.
 
 **Dados pessoais (LGPD):** prefira liberar schemas com dados mascarados. Use *masking policies* nas colunas pessoais; a máscara do script é só uma camada extra.

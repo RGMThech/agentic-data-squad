@@ -15,7 +15,7 @@ Os agentes podem consultar dados reais e testar pipelines em uma **sandbox**, us
 | O quê | Permissão |
 |-------|-----------|
 | Fontes (`dados.leitura`) | somente leitura |
-| Sandbox (`dados.escrita`: um ou mais `banco.schema`) | criar e alterar tabelas e views |
+| Sandbox (`dados.escrita`): um banco inteiro ou schemas `banco.schema` | criar schemas (no banco inteiro), tabelas e views |
 | Motor de consulta (warehouse, projeto de execução) | usar |
 | Produção | nada além de leitura nas fontes liberadas |
 
@@ -26,6 +26,8 @@ Quem garante isso é a **plataforma**. O `scripts/dados.py` acrescenta travas:
 - limite de 200 linhas;
 - máscara de colunas com cara de dado pessoal;
 - no BigQuery, limite de GB processados por consulta.
+
+**Recomendado:** dê à squad um banco de trabalho inteiro (catálogo, database, projeto ou warehouse de desenvolvimento). Assim os agentes criam sozinhos as camadas de que o design precisar. Você só concede o acesso uma vez, e as fontes continuam somente leitura.
 
 ## Como configurar
 

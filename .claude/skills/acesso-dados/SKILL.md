@@ -7,9 +7,12 @@ description: Como os agentes leem e escrevem dados reais da squad (Databricks, S
 
 Toda consulta a dados reais passa por `scripts/dados.py`. O script usa a identidade da squad (service principal, usuário de serviço ou service account) na plataforma configurada em `.squad/squad.yaml` → `dados.plataforma`. Essa identidade tem:
 - **leitura** apenas nas fontes listadas em `dados.leitura`;
-- **escrita** apenas nos schemas de sandbox listados em `dados.escrita` (um ou vários `banco.schema`, ex.: bronze, silver e gold de um catálogo de desenvolvimento).
+- **escrita** apenas na sandbox `dados.escrita`. Cada item é:
+  - um **banco inteiro** (ex.: `eleicoes2024`): você **cria os schemas de que o design precisar** (`CREATE SCHEMA IF NOT EXISTS eleicoes2024.bronze`, `silver`, `gold`…) e as tabelas dentro deles, sem pedir nada ao Operador;
+  - ou um **schema** (`banco.schema`): só aquele schema.
+- As **fontes** (`dados.leitura`) são sempre somente leitura, mesmo quando ficam dentro do banco de escrita.
 
-**Schemas novos não são criados pelos agentes.** Se o design pede um schema que não está em `dados.escrita`, registre a necessidade (nome do schema e permissões) para o Operador criar na plataforma e liberar no console; não tente contornar a trava.
+Crie schemas e tabelas com `CREATE ... IF NOT EXISTS`, seguindo a convenção de nomes. Só registre um bloqueio para o Operador se a plataforma recusar por permissão.
 
 Quem garante isso é a própria plataforma (Unity Catalog, papéis do Snowflake, IAM do BigQuery, permissões do Fabric). O script acrescenta travas: uma instrução por vez; nada de GRANT, EXECUTE ou CALL; escrita só na sandbox; limite de linhas; máscara de colunas pessoais; e, no BigQuery, limite de bytes processados.
 
@@ -52,7 +55,7 @@ O service principal precisa de `READ VOLUME` no Volume. Para inventariar arquivo
 
 ## dbt
 
-Se `dados.dbt: true`, o workflow instala o adaptador dbt da plataforma e gera o perfil **`squad`** (target `sandbox`, schema de destino = o primeiro de `dados.escrita`) fora do repositório. No projeto dbt:
+Se `dados.dbt: true`, o workflow instala o adaptador dbt da plataforma e gera o perfil **`squad`** (target `sandbox`, schema de destino = o primeiro de `dados.escrita`; se for um banco inteiro, o schema `squad`) fora do repositório. No projeto dbt:
 - `dbt_project.yml` deve usar `profile: squad`;
 - rode `dbt build`, `dbt test`, `dbt compile` normalmente; os modelos são criados na sandbox;
 - **nunca** crie ou versione `profiles.yml` no repositório, nem coloque credenciais em `dbt_project.yml` ou macros;
@@ -82,6 +85,7 @@ O comando falha com "Acesso a dados não configurado" (ou "Acesso ao <plataforma
 |----------|-------------|
 | Credenciais recusadas / Chave recusada / Client secret inválido | credencial errada ou expirada: o Operador renova no console |
 | sem permissão / PERMISSION_DENIED / does not exist or not authorized | a identidade da squad não tem acesso àquele objeto: não insista, registre a necessidade |
-| fora da sandbox da squad | escrita fora de `dados.escrita`: mude o destino para um schema liberado ou peça ao Operador que crie e libere o schema |
+| fora da sandbox da squad | escrita fora de `dados.escrita`: mude o destino para a sandbox |
+| numa fonte, que é somente leitura | o destino é um schema de `dados.leitura`: grave nas camadas da squad |
 | processaria mais que o limite de N GB | consulta cara no BigQuery: filtre partições e colunas |
 | Driver do Fabric ausente | só ocorre fora do GitHub Actions; no workflow o driver é instalado sozinho |

@@ -168,12 +168,17 @@ def _alvos_de_escrita(sql: str) -> list[str]:
     return alvos
 
 
-def validar_sql(sql: str, escrita: str | list[str]) -> str:
+def validar_sql(sql: str, escrita: str | list[str], protegidos: list[str] | tuple = ()) -> str:
     """Devolve 'leitura' ou 'escrita'; levanta Erro se a instrução não for permitida.
 
-    `escrita` é o schema de sandbox ou a lista deles (ex.: bronze, silver e gold de um catálogo de dev).
+    `escrita` lista a sandbox da squad. Cada item é:
+      - `banco` (catálogo/database/projeto/warehouse inteiro): os agentes criam os schemas de que
+        precisarem (bronze, silver, gold…) e as tabelas dentro deles; ou
+      - `banco.schema`: só aquele schema.
+    `protegidos` são as fontes (dados.leitura): continuam somente leitura mesmo dentro de um banco de escrita.
     """
     permitidos = [e.strip().lower() for e in ([escrita] if isinstance(escrita, str) else escrita) if e and e.strip()]
+    fontes = [x.strip().lower() for x in protegidos if x and x.strip()]
     limpo = _sem_comentarios_e_literais(sql).strip().rstrip(";").strip()
     if not limpo:
         raise Erro("Instrução vazia.")
@@ -194,12 +199,13 @@ def validar_sql(sql: str, escrita: str | list[str]) -> str:
             raise Erro("Não consegui identificar o objeto alterado. Use nomes completos: banco.schema.tabela.")
         for a in alvos:
             partes = a.split(".")
-            if len(partes) < 3 and not (len(partes) == 2 and a in permitidos):
+            if len(partes) < 2:
                 raise Erro(f"Use o nome completo banco.schema.objeto para escrever (recebi '{a}').")
-            if ".".join(partes[:2]) not in permitidos:
-                raise Erro(f"Escrita só é permitida em {', '.join(permitidos)}. '{a}' está fora da sandbox da squad. "
-                           "Para liberar outro schema, o Operador o cria na plataforma, concede as permissões e o inclui "
-                           "em Squad Console → Configuração → Acesso a dados → Escrita.")
+            banco, schema = partes[0], ".".join(partes[:2])
+            if schema in fontes or banco in fontes:
+                raise Erro(f"'{a}' está numa fonte ({schema}), que é somente leitura. Grave nas camadas da squad.")
+            if schema not in permitidos and banco not in permitidos:
+                raise Erro(f"Escrita só é permitida em {', '.join(permitidos)}. '{a}' está fora da sandbox da squad.")
         return "escrita"
     raise Erro(f"Tipo de instrução não permitido: {primeira}.")
 
@@ -793,7 +799,7 @@ def imprimir(r: Resultado, linhas: int) -> None:
 
 def rodar(p: Plataforma, sql: str, linhas: int) -> None:
     linhas = max(1, min(linhas, LIMITE_MAXIMO))
-    validar_sql(sql, p.c["escritas"])
+    validar_sql(sql, p.c["escritas"], p.c["leitura"])
     imprimir(p.executar(sql, linhas), linhas)
 
 
@@ -811,7 +817,8 @@ def gerar_dbt_profile(p: Plataforma, pasta: Path) -> Path:
     if not p.c["escrita"]:
         raise Erro("dbt precisa da sandbox (dados.escrita): é o schema de destino dos modelos.")
     pasta.mkdir(parents=True, exist_ok=True)
-    perfil = {"squad": {"target": "sandbox", "outputs": {"sandbox": p.dbt_profile(p.c["escrita"], pasta)}}}
+    destino = p.c["escrita"] if "." in p.c["escrita"] else f'{p.c["escrita"]}.squad'  # banco inteiro: schema padrão "squad"
+    perfil = {"squad": {"target": "sandbox", "outputs": {"sandbox": p.dbt_profile(destino, pasta)}}}
     arq = pasta / "profiles.yml"
     arq.write_text("# gerado por scripts/dados.py — não versionar\n" + json.dumps(perfil, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     arq.chmod(0o600)

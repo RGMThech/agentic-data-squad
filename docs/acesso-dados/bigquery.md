@@ -37,6 +37,8 @@ GRANT `roles/bigquery.dataViewer` ON SCHEMA `meu-projeto.vendas`
   TO "serviceAccount:squad-vendas@meu-projeto.iam.gserviceaccount.com";
 ```
 
+**Para os agentes criarem os datasets sozinhos**, use um projeto de desenvolvimento só da squad, dê à service account o papel `BigQuery User` nele (permite criar datasets, dos quais ela vira dona) e informe em Escrita só o projeto (`meu-projeto-dev`).
+
 Se preferir a interface: abra o dataset → **Sharing** → **Permissions** → **Add principal**.
 
 **Dados pessoais (LGPD):** prefira datasets com dados mascarados. Use *policy tags* (Data Catalog) ou *authorized views* para colunas pessoais.

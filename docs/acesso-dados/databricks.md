@@ -67,22 +67,20 @@ GRANT USE SCHEMA, SELECT ON SCHEMA vendas.silver TO `<APP_ID>`;
 
 Não conceda `ALL PRIVILEGES`, nem permissões em catálogos de produção além de leitura, nem `MANAGE`.
 
-### Camadas em schemas separados (bronze, silver, gold)
+### Recomendado: um catálogo de trabalho para a squad
 
-Se o design separa as camadas em schemas, crie-os você mesmo (os agentes não criam schemas) e libere cada um:
+Para os agentes criarem sozinhos os schemas de que o design precisar (bronze, silver, gold…), libere o **catálogo** uma única vez. Os schemas que o service principal cria ficam com ele como dono, com todas as permissões, e você não precisa conceder mais nada a cada camada:
 
 ```sql
-CREATE SCHEMA IF NOT EXISTS dev_vendas.bronze;
-CREATE SCHEMA IF NOT EXISTS dev_vendas.silver;
-CREATE SCHEMA IF NOT EXISTS dev_vendas.gold;
+GRANT USE CATALOG, CREATE SCHEMA ON CATALOG dev_vendas TO `<APP_ID>`;
 
-GRANT USE CATALOG ON CATALOG dev_vendas TO `<APP_ID>`;
-GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA dev_vendas.bronze TO `<APP_ID>`;
-GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA dev_vendas.silver TO `<APP_ID>`;
-GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA dev_vendas.gold   TO `<APP_ID>`;
+-- fontes dentro do mesmo catálogo: somente leitura (inclui arquivos em Volumes)
+GRANT USE SCHEMA, SELECT, READ VOLUME ON SCHEMA dev_vendas.fontes TO `<APP_ID>`;
 ```
 
-No console, em **Escrita**, informe os três separados por vírgula: `dev_vendas.bronze, dev_vendas.silver, dev_vendas.gold`. Mantenha as fontes fora dessa lista para que continuem somente leitura.
+No console: **Leitura** `dev_vendas.fontes` e **Escrita** `dev_vendas` (o catálogo inteiro). As fontes continuam somente leitura: a plataforma não dá `MODIFY` nelas e o script recusa escrita em qualquer schema listado em Leitura.
+
+Use um catálogo de desenvolvimento, nunca o de produção.
 
 ## 5. Cadastrar no Squad Console
 
@@ -93,7 +91,7 @@ Squad Console → abra a squad → **Configuração** → card **Acesso a dados*
 | Host | URL do workspace, ex.: `https://adb-1234567890123456.7.azuredatabricks.net` |
 | Warehouse ID | passo 3 |
 | Leitura | catálogos ou `catalogo.schema` liberados, separados por vírgula (ex.: `vendas.silver, crm`) |
-| Escrita (sandbox) | `squad_dev.agentes` |
+| Escrita (sandbox) | o catálogo de trabalho (`dev_vendas`) ou um schema (`squad_dev.agentes`) |
 | Client ID | Application ID (passo 1) |
 | Client secret | passo 2 |
 
