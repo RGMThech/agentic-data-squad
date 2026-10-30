@@ -105,6 +105,11 @@ jobs:
           BRANCH="squad/${FEATURE}"
           if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
             git switch "$BRANCH"
+            # traz para a feature as atualizações da main (harness, agentes, scripts)
+            if ! git merge -q --no-edit origin/main; then
+              git merge --abort
+              echo "::warning::A branch $BRANCH conflita com a main; seguindo sem atualizar."
+            fi
           else
             git switch -c "$BRANCH"
           fi
