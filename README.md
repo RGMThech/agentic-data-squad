@@ -6,6 +6,8 @@ O humano (Operador) define a intenção e aprova três gates. Nove agentes espec
 
 O template é **agnóstico de plataforma**. Funciona com Databricks, Snowflake, BigQuery, Fabric, dbt ou Spark puro. Os pontos de integração estão marcados como `# PLATAFORMA:` para você adaptar.
 
+Os agentes podem **consultar e testar com dados reais** em Databricks, Snowflake, BigQuery ou Microsoft Fabric (e rodar dbt), com leitura só nas fontes liberadas e escrita só numa sandbox. Veja [docs/acesso-dados.md](docs/acesso-dados.md).
+
 ---
 
 ## Como funciona

@@ -8,7 +8,7 @@ Atalhos:
 - Convenção de nomes: skill `naming-convention` e `docs/naming-convention.md`
 - Testes de qualidade: skill `data-quality-tests`
 - LGPD: skill `lgpd-checklist`
-- Dados no Databricks: skill `databricks` e `docs/databricks.md`
+- Acesso a dados (Databricks, Snowflake, BigQuery, Fabric, dbt): skill `acesso-dados` e `docs/acesso-dados.md`
 - Agentes disponíveis: `.claude/agents/`
 
 Antes de encerrar qualquer tarefa que altere arquivos, rode:

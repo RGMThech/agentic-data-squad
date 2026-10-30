@@ -4,6 +4,7 @@
       "Bash(python scripts/*)",
       "Bash(python3 scripts/*)",
       "Bash(pytest:*)",
+      "Bash(dbt:*)",
       "Bash(git status:*)",
       "Bash(git diff:*)",
       "Bash(git log:*)",

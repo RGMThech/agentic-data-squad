@@ -8,3 +8,11 @@ __pycache__/
 *.duckdb
 .DS_Store
 .claude/settings.local.json
+
+# dbt: perfis e chaves nunca vão para o repositório
+profiles.yml
+gcp-sa.json
+*.p8
+target/
+dbt_packages/
+logs/

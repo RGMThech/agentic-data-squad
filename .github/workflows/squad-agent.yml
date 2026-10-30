@@ -70,6 +70,34 @@ jobs:
       - name: Validar pedido
         run: python scripts/squad_run.py validar
 
+      # Acesso a dados (opcional): drivers e perfil do dbt conforme o bloco "dados" do squad.yaml.
+      # Guia: docs/acesso-dados.md
+      - name: Preparar acesso a dados
+        env:
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+          FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
+        run: |
+          PLATAFORMA=$(python scripts/dados.py plataforma)
+          echo "Plataforma de dados: ${PLATAFORMA:-nenhuma}"
+          if [ "$PLATAFORMA" = "fabric" ]; then
+            pip install -q pyodbc
+            if ! odbcinst -q -d 2>/dev/null | grep -q "ODBC Driver 18 for SQL Server"; then
+              curl -sSL -o "$RUNNER_TEMP/ms.deb" "https://packages.microsoft.com/config/ubuntu/$(lsb_release -rs)/packages-microsoft-prod.deb"
+              sudo dpkg -i "$RUNNER_TEMP/ms.deb" >/dev/null || true
+              sudo apt-get update -qq
+              sudo ACCEPT_EULA=Y apt-get install -y -qq msodbcsql18 unixodbc
+            fi
+          fi
+          if [ "$(python scripts/dados.py usa-dbt)" = "sim" ]; then
+            pip install -q "dbt-${PLATAFORMA}"
+            python scripts/dados.py dbt-profile --saida "$RUNNER_TEMP/dbt"
+            echo "DBT_PROFILES_DIR=$RUNNER_TEMP/dbt" >> "$GITHUB_ENV"
+          fi
+
       - name: Preparar branch da feature
         run: |
           git config user.name "squad-agent[bot]"
@@ -86,9 +114,13 @@ jobs:
         id: executar
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-          # acesso ao Databricks (opcional): veja docs/databricks.md
+          # acesso a dados (opcional, só a plataforma configurada é usada): veja docs/acesso-dados.md
           DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
           DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+          SNOWFLAKE_PRIVATE_KEY: ${{ secrets.SNOWFLAKE_PRIVATE_KEY }}
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+          FABRIC_CLIENT_ID: ${{ secrets.FABRIC_CLIENT_ID }}
+          FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
         run: python scripts/squad_run.py executar
 
       - name: Validadores do harness

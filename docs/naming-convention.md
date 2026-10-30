@@ -30,6 +30,7 @@ O template é agnóstico. Escolha uma das opções e registre num ADR:
 | Databricks Unity Catalog | `<catalogo>.<schema>.slv_vendas__pedidos` | catálogo = domínio, schema = camada, tabela = entidade |
 | Snowflake | `<db>.<schema>.SLV_VENDAS__PEDIDOS` | db = domínio, schema = camada |
 | BigQuery | `<projeto>.<dataset>.slv_vendas__pedidos` | dataset = `<dominio>_<camada>` |
+| Microsoft Fabric | `<warehouse>.<schema>.slv_vendas__pedidos` | warehouse = domínio, schema = camada |
 
 Mesmo na opção B, mantenha o **nome do arquivo** do pipeline no padrão completo: é o que o validador usa.
 
