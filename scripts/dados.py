@@ -58,7 +58,7 @@ RE_PII = re.compile(
     r"nascimento|birth|senha|password|token|cartao|card|conta|iban|pis|cns|passaporte|ip_?addr)",
     re.I,
 )
-LEITURA = ("SELECT", "WITH", "SHOW", "DESCRIBE", "DESC", "EXPLAIN", "VALUES")
+LEITURA = ("SELECT", "WITH", "SHOW", "DESCRIBE", "DESC", "EXPLAIN", "VALUES", "LIST")
 ESCRITA = ("CREATE", "INSERT", "MERGE", "UPDATE", "DELETE", "DROP", "ALTER", "TRUNCATE", "REPLACE", "COPY", "OPTIMIZE", "VACUUM", "COMMENT")
 VERBOS_ESCRITA = ("INSERT", "MERGE", "DELETE", "UPDATE", "DROP", "ALTER", "TRUNCATE", "CREATE", "INTO")
 PROIBIDOS = ("GRANT", "REVOKE", "DENY", "SET OWNER", "USE CATALOG", "CREATE CATALOG", "DROP CATALOG", "CREATE CONNECTION",

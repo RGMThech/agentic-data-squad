@@ -36,6 +36,18 @@ python scripts/dados.py sql "CREATE OR REPLACE TABLE squad_dev.agentes.slv_venda
 
 A saída é uma tabela markdown (no máximo 200 linhas). No BigQuery, `amostra` não tem custo (lê a tabela sem rodar consulta) e o rodapé mostra os GB processados de cada `sql`.
 
+## Arquivos em Volumes (Databricks)
+
+Arquivos brutos (CSV, JSON, Parquet) num Volume do Unity Catalog são lidos pelo mesmo script:
+
+```bash
+python scripts/dados.py sql "LIST '/Volumes/eleicoes/brutos/arquivos/'"
+python scripts/dados.py sql "SELECT * FROM read_files('/Volumes/eleicoes/brutos/arquivos/candidatos.csv', format => 'csv', header => true, sep => ';', encoding => 'ISO-8859-1') LIMIT 5"
+python scripts/dados.py sql "SELECT COUNT(*) AS linhas_qt FROM read_files('/Volumes/eleicoes/brutos/arquivos/candidatos.csv', format => 'csv', header => true, sep => ';')"
+```
+
+O service principal precisa de `READ VOLUME` no Volume. Para inventariar arquivos, prefira `LIST` e contagens; amostras saem mascaradas como qualquer consulta.
+
 ## dbt
 
 Se `dados.dbt: true`, o workflow instala o adaptador dbt da plataforma e gera o perfil **`squad`** (target `sandbox`, schema de destino = `dados.escrita`) fora do repositório. No projeto dbt:

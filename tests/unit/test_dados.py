@@ -48,6 +48,8 @@ def usar(monkeypatch, raiz: dict):
     "SELECT 1; -- comentário com ; no fim",
     "SELECT TOP 10 * FROM [vendas].[dbo].[pedidos]",       # Fabric
     "SELECT * FROM `meu-projeto.vendas.pedidos` LIMIT 5",  # BigQuery
+    "LIST '/Volumes/eleicoes/brutos/arquivos/'",           # arquivos num Volume
+    "SELECT * FROM read_files('/Volumes/e/b/a/x.csv', format => 'csv') LIMIT 5",
 ])
 def test_leitura_permitida(sql):
     assert dados.validar_sql(sql, ESCRITA) == "leitura"

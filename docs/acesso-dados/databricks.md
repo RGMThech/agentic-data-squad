@@ -57,6 +57,8 @@ GRANT USE SCHEMA, CREATE TABLE, MODIFY, SELECT ON SCHEMA squad_dev.agentes TO `<
 -- Fontes: somente leitura (repita para cada catálogo/schema que a squad pode ler)
 GRANT USE CATALOG ON CATALOG vendas TO `<APP_ID>`;
 GRANT USE SCHEMA, SELECT ON SCHEMA vendas.silver TO `<APP_ID>`;
+-- arquivos brutos num Volume (CSV, JSON…):
+-- GRANT READ VOLUME ON VOLUME vendas.brutos.arquivos TO `<APP_ID>`;
 -- ou o catálogo inteiro:
 -- GRANT USE SCHEMA, SELECT ON CATALOG vendas TO `<APP_ID>`;
 ```
