@@ -86,6 +86,9 @@ jobs:
         id: executar
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # acesso ao Databricks (opcional): veja docs/databricks.md
+          DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+          DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
         run: python scripts/squad_run.py executar
 
       - name: Validadores do harness

@@ -7,3 +7,11 @@ modelo: sonnet               # sonnet | opus | haiku (ou id completo do modelo)
 max_turnos: 60               # limite de turnos por execução de agente
 alerta_custo_usd: 5          # o console destaca execuções acima deste valor
 console_bot: ''               # login do bot do GitHub App do Squad Console (ex.: squad-console[bot]); preenchido pelo console
+
+# Acesso dos agentes ao Databricks (opcional). Guia: docs/databricks.md
+# Credenciais (DATABRICKS_CLIENT_ID / DATABRICKS_CLIENT_SECRET) ficam nos segredos do GitHub Actions.
+databricks:
+  host: ''                     # ex.: https://adb-1234567890123456.7.azuredatabricks.net
+  warehouse_id: ''             # SQL warehouse usado pelos agentes
+  leitura: []                  # catálogos ou catalogo.schema que os agentes podem ler (ex.: [vendas, crm.silver])
+  escrita: ''                  # único schema onde os agentes podem escrever (ex.: squad_dev.agentes)
