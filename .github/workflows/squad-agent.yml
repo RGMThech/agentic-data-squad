@@ -128,6 +128,12 @@ jobs:
           FABRIC_CLIENT_SECRET: ${{ secrets.FABRIC_CLIENT_SECRET }}
         run: python scripts/squad_run.py executar
 
+      # Agentes não mudam as próprias regras: alterações em scripts, workflows, .claude,
+      # AGENTS.md e templates são desfeitas e registradas no PR.
+      - name: Proteger o harness
+        if: always() && steps.executar.outcome != 'skipped'
+        run: HARNESS_AVISO="$RUNNER_TEMP/harness.txt" python scripts/proteger_harness.py restaurar
+
       - name: Validadores do harness
         id: validadores
         if: always() && steps.executar.outcome != 'skipped'
@@ -169,6 +175,7 @@ jobs:
           fi
           if [ -f "$REGISTRO" ]; then
             python scripts/squad_run.py comentario > "$RUNNER_TEMP/comentario.md"
+            if [ -f "$RUNNER_TEMP/harness.txt" ]; then printf '\n%s\n' "$(cat "$RUNNER_TEMP/harness.txt")" >> "$RUNNER_TEMP/comentario.md"; fi
             gh pr comment "$PR" --body-file "$RUNNER_TEMP/comentario.md"
             cat "$RUNNER_TEMP/comentario.md" >> "$GITHUB_STEP_SUMMARY"
           fi

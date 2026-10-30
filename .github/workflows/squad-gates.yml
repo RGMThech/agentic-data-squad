@@ -12,6 +12,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
@@ -24,6 +26,10 @@ jobs:
         run: |
           pip install -q actionlint-py
           actionlint
+
+      - name: Harness protegido (branches de feature não mudam as regras)
+        if: startsWith(github.head_ref || github.ref_name, 'squad/')
+        run: python scripts/proteger_harness.py verificar "origin/${{ github.base_ref || 'main' }}"
 
       - name: Convenção de nomes
         run: python scripts/validate_naming.py

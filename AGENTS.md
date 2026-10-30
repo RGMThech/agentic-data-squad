@@ -104,6 +104,10 @@ automaticamente por `scripts/validate_naming.py`. Resumo:
 8. **Nunca peça, exiba ou grave credenciais** (tokens, secrets, senhas) em specs, PRs,
    comentários ou logs. Se faltar acesso, registre a necessidade e aponte o caminho:
    Squad Console → Configuração → Acesso a dados (guia em `docs/acesso-dados.md`).
+9. **Nunca altere o harness**: `scripts/`, `.github/`, `.claude/`, `.squad/`, `templates/`,
+   `AGENTS.md`, `CLAUDE.md`, `pytest.ini`. Se uma trava ou regra impede o trabalho, **não a
+   contorne**: registre o bloqueio em `tasks.md` e na sua mensagem final para o Operador decidir.
+   Alterações nesses arquivos são desfeitas automaticamente e reprovam o CI da feature.
 
 ---
 

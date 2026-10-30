@@ -21,7 +21,25 @@
       "Bash(git push -f:*)",
       "Bash(git push origin main:*)",
       "Bash(git merge:*)",
-      "Bash(rm -rf:*)"
+      "Bash(rm -rf:*)",
+      "Edit(./scripts/**)",
+      "Write(./scripts/**)",
+      "Edit(./.github/**)",
+      "Write(./.github/**)",
+      "Edit(./.claude/**)",
+      "Write(./.claude/**)",
+      "Edit(./.squad/**)",
+      "Write(./.squad/**)",
+      "Edit(./templates/**)",
+      "Write(./templates/**)",
+      "Edit(./AGENTS.md)",
+      "Write(./AGENTS.md)",
+      "Edit(./CLAUDE.md)",
+      "Write(./CLAUDE.md)",
+      "Edit(./pytest.ini)",
+      "Write(./pytest.ini)",
+      "Edit(./requirements-dev.txt)",
+      "Write(./requirements-dev.txt)"
     ]
   },
   "hooks": {
