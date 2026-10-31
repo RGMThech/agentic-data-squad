@@ -6,7 +6,6 @@
 # leitores:   só visualizam
 #
 # Se a lista de operadores estiver vazia, administradores do console atuam como operadores.
-operadores:
-  - mellrodrigo
+operadores: []   # preenchido pelo Squad Console com quem cria a squad
 membros: []
 leitores: []
