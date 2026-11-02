@@ -32,3 +32,26 @@ def test_colunas():
 def test_detecta_duvidas_abertas():
     texto = "## 11. Dúvidas abertas\n- [ ] qual fuso?\n- [x] resolvida\n\n## 12. Decisões\n- [ ] não conta\n"
     assert check_spec.duvidas_abertas(texto) == ["- [ ] qual fuso?"]
+
+
+def test_status_de_tarefa_com_observacoes():
+    assert check_spec.status_tarefa("aprovado (QA; bronze executada)") == ("aprovado", "QA; bronze executada")
+    assert check_spec.status_tarefa("`em_qa`") == ("em_qa", "")
+    assert check_spec.status_tarefa("nao_executar — fora do escopo")[0] == "nao_executar"
+    assert check_spec.status_tarefa("Resolvido fora — feito pelo DBA") == ("resolvido_fora", "feito pelo DBA")
+
+
+def test_g3_exige_tarefas_encerradas(tmp_path, monkeypatch):
+    pasta = tmp_path / "specs" / "001-x"
+    pasta.mkdir(parents=True)
+    fm = "---\nstatus: aprovado\naprovado_por: a\naprovado_em: 2026-11-02\n---\n"
+    (pasta / "spec.md").write_text(fm, encoding="utf-8")
+    (pasta / "design.md").write_text(fm, encoding="utf-8")
+    tabela = "| ID | Tarefa | Status |\n|---|---|---|\n| T-01 | a | aprovado |\n| T-02 | b | {s} |\n"
+    monkeypatch.setattr(check_spec, "ROOT", tmp_path)
+    (pasta / "tasks.md").write_text(tabela.format(s="pendente"), encoding="utf-8")
+    assert check_spec.checar_g3("001-x") == 1
+    (pasta / "tasks.md").write_text(tabela.format(s="nao_executar"), encoding="utf-8")
+    assert check_spec.checar_g3("001-x") == 1, "sem justificativa"
+    (pasta / "tasks.md").write_text(tabela.format(s="nao_executar — fora do escopo"), encoding="utf-8")
+    assert check_spec.checar_g3("001-x") == 0

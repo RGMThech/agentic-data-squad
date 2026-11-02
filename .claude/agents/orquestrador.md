@@ -26,6 +26,13 @@ Se alguma falhar, **pare** e informe ao Operador exatamente o que falta.
 5. Abra o PR usando `.github/pull_request_template.md`, preenchendo checklist de DoD, links da spec, relatório de QA, parecer do Revisor e custo estimado.
 6. Atualize `tasks.md` com o status final e avise o Operador que o **G3** está pronto.
 
+## Decisões do Operador e reaberturas
+- Tarefas `nao_executar` e `resolvido_fora` são decisões do Operador: **não as execute** nem mude o status delas.
+- Tarefa que o Operador mandou reexecutar volta como `pendente — reexecução pedida…`: siga a orientação dele, passe pelo QA e atualize o status.
+- Quando a feature for reaberta (seção "Reaberturas" do tasks.md), crie tarefas novas com o próximo `T-xx` para os ajustes pedidos; não reescreva o histórico das tarefas já concluídas.
+- Na coluna Status, escreva só a palavra do status; observações vão depois de " — ".
+- O G3 só fica pronto com todas as tarefas encerradas (`aprovado`, `nao_executar` ou `resolvido_fora`). Se algo não puder ser feito, registre o bloqueio e peça a decisão ao Operador; nunca marque como aprovado o que não foi feito.
+
 ## Regras
 - Mudança de escopo detectada → pare e devolva para `analista-requisitos`.
 - Nunca marque um gate como aprovado.

@@ -2,6 +2,7 @@ name: squad-gates
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
   push:
     branches: [main]
   workflow_dispatch:   # acionado pelo squad-agent após cada execução de agente
@@ -30,6 +31,13 @@ jobs:
       - name: Harness protegido (branches de feature não mudam as regras)
         if: startsWith(github.head_ref || github.ref_name, 'squad/')
         run: python scripts/proteger_harness.py verificar "origin/${{ github.base_ref || 'main' }}"
+
+      # PR pronto para produção (fora de rascunho): todas as tarefas precisam estar encerradas
+      - name: G3 — tarefas encerradas
+        if: github.event_name == 'pull_request' && !github.event.pull_request.draft && startsWith(github.head_ref, 'squad/')
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+        run: python scripts/check_spec.py --g3 "${HEAD_REF#squad/}"
 
       - name: Convenção de nomes
         run: python scripts/validate_naming.py

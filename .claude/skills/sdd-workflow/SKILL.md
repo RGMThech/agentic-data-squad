@@ -48,6 +48,14 @@ aprovado_em:
 Sinal: alguém precisa implementar algo que não está na spec, ou a spec contradiz o dado real.
 Ação: parar a tarefa, registrar no `tasks.md`, devolver ao analista-requisitos, que incrementa `versao` e volta ao G1. Nunca "resolver no código".
 
+## Ciclo de vida das tarefas e reabertura
+
+- **Encerrada** = `aprovado`, `nao_executar` ou `resolvido_fora`. O G3 (CI e console) só libera com todas encerradas.
+- `nao_executar` e `resolvido_fora` são decisões do Operador, com justificativa em "Decisões sobre tarefas"; a governança leva isso para o `entrega.md`.
+- O Operador pode pedir para **reexecutar** uma tarefa: ela volta a `pendente` com a orientação dele.
+- Uma feature entregue pode ser **reaberta** (ajustes, tarefas pendentes ou mudança de especificação): nova rodada na mesma branch `squad/<id>`, com PR novo. Registre a rodada em "Reaberturas" e crie tarefas novas com o próximo `T-xx`.
+- Se a reabertura mudar a spec, ela volta ao G1 (e o design ao G2) antes de qualquer tarefa nova.
+
 ## Mensagem ao Operador (formato padrão)
 
 ```

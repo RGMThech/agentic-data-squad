@@ -26,5 +26,12 @@ gerado_em: AAAA-MM-DD
 ## 5. Qualidade
 <resumo do QA: testes, reconciliação, casos de ouro; link para qa-report.md.>
 
-## 6. Pendências e próximos passos
+## 6. Tarefas não executadas ou resolvidas de outra forma
+| Tarefa | Decisão | Justificativa | Data / quem |
+|--------|---------|---------------|-------------|
+
+## 7. Histórico de rodadas
+<cada reabertura da feature: data, o que foi pedido, o que mudou.>
+
+## 8. Pendências e próximos passos
 <o que ficou fora do escopo, riscos conhecidos, publicação em produção via CI/CD.>
