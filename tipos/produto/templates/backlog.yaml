@@ -1,0 +1,16 @@
+# Backlog priorizado da feature (backlog/<NNN>-<slug>.yaml)
+# RICE = alcance × impacto × confianca ÷ esforco (o validador recalcula "rice")
+feature: NNN-slug
+itens:
+  - id: HU-01
+    titulo: <história resumida>
+    historia: Como <persona>, quero <ação>, para <benefício>.
+    criterios:
+      - Dado …, quando …, então …
+    rice:
+      alcance: 1000      # pessoas ou eventos por trimestre
+      impacto: 2         # 0.25 | 0.5 | 1 | 2 | 3
+      confianca: 0.8     # 0 a 1
+      esforco: 2         # pessoas-semana
+    rice_score: 800
+    status: pronto       # ideia | refinando | pronto

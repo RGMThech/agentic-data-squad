@@ -9,7 +9,7 @@ on:
 
 jobs:
   harness:
-    name: Harness (naming, contratos, gates, testes)
+    name: Harness (validadores, gates, testes)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -39,17 +39,16 @@ jobs:
           HEAD_REF: ${{ github.head_ref }}
         run: python scripts/check_spec.py --g3 "${HEAD_REF#squad/}"
 
-      - name: Convenção de nomes
-        run: python scripts/validate_naming.py
+      - name: Validadores do tipo da squad (.squad/tipo.yaml)
+        run: python scripts/gates.py
 
-      - name: Data contracts
-        run: python scripts/check_contracts.py
-
-      - name: Gates G1/G2
-        run: python scripts/check_spec.py
-
-      - name: Testes (unitários + casos de ouro + contrato)
+      - name: Testes
         run: pytest -q
+
+      # Só no repositório-template: cada tipo de squad é instanciado e validado
+      - name: Tipos de squad do template
+        if: hashFiles('tipos/base.yaml') != ''
+        run: python scripts/testar_tipos.py
 
   # PLATAFORMA: adicione aqui o deploy para dev/homologação após merge e,
   # para produção, um job com `environment: producao` exigindo aprovação manual (G3).

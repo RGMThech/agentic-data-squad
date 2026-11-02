@@ -1,0 +1,17 @@
+# Avaliação final (avaliacoes/<NNN>-<slug>/eval.yaml) — registrada pelo avaliador
+feature: NNN-slug
+modelo: <nome e versão>
+dataset: <conjunto de teste e versão/hash>
+semente: 42
+data: AAAA-MM-DD
+metricas:
+  - nome: recall
+    valor: 0.0
+    limiar: 0.85
+    direcao: maior        # maior = valor >= limiar | menor = valor <= limiar
+  - nome: latencia_p95_ms
+    valor: 0
+    limiar: 800
+    direcao: menor
+resultado: reprovado      # aprovado | reprovado (o validador confere com as métricas)
+observacoes: ""

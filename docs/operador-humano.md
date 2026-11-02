@@ -1,14 +1,14 @@
 # Playbook do Operador Humano
 
-Você é o único humano da squad. Seu trabalho não é escrever código. É garantir que **a intenção está certa** e que **o harness impede o erro**.
+Você é o único humano da squad. Seu trabalho não é executar. É garantir que **a intenção está certa** e que **o harness impede o erro**.
 
 ## Sua rotina
 
 | Momento | Você faz | Tempo típico |
 |---------|----------|--------------|
-| Nova demanda | Descreve o problema de negócio ao `analista-requisitos` | 5–10 min |
-| G1 — Spec | Responde as dúvidas, confere regras, métricas e critérios de aceite, aprova | 15–30 min |
-| G2 — Design | Confere modelo, contratos, PII e custo, aprova | 15–30 min |
+| Nova demanda | Abre a feature no Squad Console descrevendo o problema de negócio | 5–10 min |
+| G1 | Responde as dúvidas, confere a especificação e os critérios de aceite, aprova | 15–30 min |
+| G2 | Confere o design ou plano, riscos e custos, aprova | 15–30 min |
 | Durante a execução | Só responde escalonamentos (4ª falha de QA ou mudança de escopo) | eventual |
 | G3 — PR | Lê o resumo, o relatório de QA e o parecer do Revisor, aprova o merge | 10–20 min |
 | Pós-entrega | Transforma cada correção em regra do harness | 10 min |
@@ -16,7 +16,7 @@ Você é o único humano da squad. Seu trabalho não é escrever código. É gar
 ## Como pedir uma feature
 
 ```
-Use o agente analista-requisitos para criar a spec da próxima feature.
+Use o agente de especificação (papeis.especificacao em .squad/tipo.yaml) para criar a spec da próxima feature.
 Problema: <o que está doendo no negócio>
 Quem usa: <público>
 Decisão que será tomada com isso: <...>
@@ -27,7 +27,7 @@ Prazo/SLA: <...>
 Depois de aprovar a spec:
 
 ```
-Use o agente arquiteto-dados para desenhar a spec <id>.
+Use o agente de design (papeis.design em .squad/tipo.yaml) para desenhar a spec <id>.
 ```
 
 Depois de aprovar o design:
@@ -49,6 +49,8 @@ aprovado_em: AAAA-MM-DD
 Nenhum agente pode fazer isso. O `check_spec.py` exige esses campos e bloqueia tarefas sem os dois gates aprovados.
 
 ## O que revisar em cada gate
+
+Os critérios específicos do tipo da squad estão em `AGENTS.tipo.md`. Exemplo de uma squad de dados:
 
 **G1 — Spec**
 - Cada métrica tem fórmula, grão, filtro e tratamento de nulos?

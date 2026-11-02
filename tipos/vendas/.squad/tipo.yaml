@@ -1,0 +1,39 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: vendas
+nome: Vendas e pré-vendas
+descricao: Pesquisa de contas, cadências, propostas, apresentações e playbooks comerciais.
+
+rotulos:
+  g1: Objetivo
+  g2: Playbook
+  g3: Liberação
+
+papeis:
+  especificacao: analista-comercial
+  design: estrategista-vendas
+  orquestracao: orquestrador
+  documentacao: documentacao
+
+spec:
+  secoes: [Objetivo comercial, Público-alvo (ICP), Oferta, Metas, Critérios de aceite, Dúvidas abertas]
+
+validadores:
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+  - nome: Vendas (cadências, propostas, LGPD)
+    cmd: python scripts/check_vendas.py
+    arquivos: [contas/**, cadencias/**, propostas/**, playbooks/**, docs/oferta.md, specs/**]
+
+entrega:
+  pastas:
+    contas/: Pesquisa de contas
+    cadencias/: Cadências
+    propostas/: Propostas
+    apresentacoes/: Apresentações
+    playbooks/: Playbooks
+    docs/: Oferta e documentação

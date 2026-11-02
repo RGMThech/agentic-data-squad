@@ -1,0 +1,33 @@
+# Fluxo de atendimento (fluxos/<slug>.yaml)
+nome: <nome do fluxo>
+canal: whatsapp            # chat | whatsapp | telefone (URA) | email
+inicio: boas_vindas
+nos:
+  boas_vindas:
+    tipo: pergunta
+    texto: Olá! Sou o assistente virtual. Como posso ajudar?
+    opcoes:
+      - rotulo: Segunda via do boleto
+        proximo: segunda_via
+      - rotulo: Falar com um atendente
+        proximo: atendente
+  segunda_via:
+    tipo: acao
+    texto: Vou gerar a segunda via e enviar aqui mesmo.
+    acao: gerar_segunda_via      # nome da integração; implementada fora da squad
+    proximo: resolveu
+  resolveu:
+    tipo: pergunta
+    texto: Isso resolveu?
+    opcoes:
+      - rotulo: Sim
+        proximo: fim
+      - rotulo: Não, quero falar com alguém
+        proximo: atendente
+  atendente:
+    tipo: humano
+    texto: Vou te transferir para um atendente. Aguarde só um instante.
+    fila: financeiro
+  fim:
+    tipo: fim
+    texto: Obrigado pelo contato!

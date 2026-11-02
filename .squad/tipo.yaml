@@ -1,0 +1,46 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: dados
+nome: Data Analytics
+descricao: Pipelines, modelos de dados, métricas e painéis, do pedido de negócio à tabela em produção.
+
+# Nomes dos gates na interface
+rotulos:
+  g1: Spec
+  g2: Design
+  g3: Produção
+
+# Agente de cada papel do fluxo SDD (o console aciona estes nomes)
+papeis:
+  especificacao: analista-requisitos
+  design: arquiteto-dados
+  orquestracao: orquestrador
+  documentacao: governanca-docs
+
+# Seções obrigatórias da spec (scripts/check_spec.py)
+spec:
+  secoes: [Regras de negócio, Métricas, Critérios de aceite, Dúvidas abertas]
+
+# Validadores da squad (scripts/gates.py, CI, hook pós-edição). "arquivos" diz quando o hook roda.
+validadores:
+  - nome: Convenção de nomes
+    cmd: python scripts/validate_naming.py
+    arquivos: [pipelines/**, contracts/**, specs/**]
+  - nome: Data contracts
+    cmd: python scripts/check_contracts.py
+    arquivos: [pipelines/**, contracts/**]
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+
+# Como o console agrupa os arquivos na aba Entrega (pasta → rótulo)
+entrega:
+  pastas:
+    contracts/: Contratos de dados
+    pipelines/: Pipelines
+    semantic/: Camada semântica
+    tests/: Testes
+    docs/: Documentação e ADRs

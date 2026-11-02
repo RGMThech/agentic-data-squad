@@ -1,0 +1,37 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: marketing
+nome: Marketing
+descricao: Campanhas, conteúdo, SEO e mídia, do briefing às peças revisadas e ao relatório de resultados.
+
+rotulos:
+  g1: Briefing
+  g2: Plano
+  g3: Publicação
+
+papeis:
+  especificacao: estrategista
+  design: planejador-campanha
+  orquestracao: orquestrador
+  documentacao: analista-performance
+
+spec:
+  secoes: [Objetivo, Público, Mensagem principal, KPIs, Critérios de aceite, Dúvidas abertas]
+
+validadores:
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+  - nome: Peças e marca
+    cmd: python scripts/check_marketing.py
+    arquivos: [pecas/**, campanhas/**, specs/**, docs/marca.md]
+
+entrega:
+  pastas:
+    pecas/: Peças
+    campanhas/: Planos de campanha e mídia
+    relatorios/: Relatórios de resultado
+    docs/: Marca e documentação

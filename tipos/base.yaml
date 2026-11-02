@@ -1,0 +1,62 @@
+# Catálogo de tipos de squad do template.
+# A raiz do repositório é o tipo "padrao" (Data Analytics). Cada outro tipo é um pacote em
+# tipos/<tipo>/, com a mesma estrutura de pastas da raiz. Ao criar uma squad de outro tipo,
+# o Squad Console (ou scripts/instanciar_tipo.py) apaga os caminhos de "especifico_do_padrao",
+# copia tipos/<tipo>/ por cima da raiz e remove a pasta tipos/.
+padrao: dados
+
+tipos:
+  dados:
+    nome: Data Analytics
+    descricao: Pipelines, modelos de dados, métricas e painéis, do pedido de negócio à tabela em produção.
+    icone: chart
+  software:
+    nome: Desenvolvimento de Software
+    descricao: Funcionalidades, APIs e correções com histórias de usuário, arquitetura, código, testes e revisão.
+    icone: code
+  marketing:
+    nome: Marketing
+    descricao: Campanhas, conteúdo, SEO e mídia, do briefing às peças revisadas e ao relatório de resultados.
+    icone: megaphone
+  produto:
+    nome: Produto
+    descricao: Discovery, pesquisa, PRD, protótipos e backlog priorizado, prontos para o time de desenvolvimento.
+    icone: compass
+  ia-ml:
+    nome: IA e Machine Learning
+    descricao: Modelos, LLMs, RAG e agentes, com avaliação, model card e riscos de IA responsável.
+    icone: brain
+  vendas:
+    nome: Vendas e pré-vendas
+    descricao: Pesquisa de contas, cadências, propostas, apresentações e playbooks comerciais.
+    icone: handshake
+  atendimento:
+    nome: Atendimento / CX
+    descricao: Base de conhecimento, fluxos de atendimento e chatbot, macros e análise de tickets.
+    icone: headset
+
+# Caminhos do pacote padrão (dados) que saem quando a squad é de outro tipo.
+# Use "pasta/**" para pastas inteiras ou o caminho exato do arquivo.
+especifico_do_padrao:
+  - .claude/agents/**
+  - .claude/skills/naming-convention/**
+  - .claude/skills/data-quality-tests/**
+  - contracts/**
+  - pipelines/**
+  - semantic/**
+  - tests/golden/**
+  - tests/quality/**
+  - specs/000-exemplo-receita-diaria/**
+  - scripts/validate_naming.py
+  - scripts/check_contracts.py
+  - docs/naming-convention.md
+  - docs/lineage.md
+  - docs/databricks.md
+  - docs/adr/0001-versao-mais-recente-do-pedido.md
+  - templates/data-contract.yaml
+  - templates/spec.md
+  - templates/design.md
+  - templates/qa-report.md
+  - templates/review.md
+  - templates/entrega.md
+  - docs/apresentacao/**

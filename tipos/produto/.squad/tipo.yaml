@@ -1,0 +1,37 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: produto
+nome: Produto
+descricao: Discovery, pesquisa, PRD, protótipos e backlog priorizado, prontos para o time de desenvolvimento.
+
+rotulos:
+  g1: Problema
+  g2: PRD
+  g3: Handoff
+
+papeis:
+  especificacao: analista-produto
+  design: product-manager
+  orquestracao: orquestrador
+  documentacao: documentacao
+
+spec:
+  secoes: [Problema, Evidências, Público, Resultado esperado, Critérios de aceite, Dúvidas abertas]
+
+validadores:
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+  - nome: Produto (PRD, backlog, pesquisa)
+    cmd: python scripts/check_produto.py
+    arquivos: [specs/**, backlog/**, pesquisa/**]
+
+entrega:
+  pastas:
+    pesquisa/: Pesquisa e discovery
+    prototipos/: Protótipos
+    backlog/: Backlog priorizado
+    docs/: Documentação de produto

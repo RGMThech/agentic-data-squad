@@ -2,20 +2,19 @@
 - Spec: `specs/<id>/spec.md` (versão: )
 - Design: `specs/<id>/design.md` (versão: )
 - Tarefas: `specs/<id>/tasks.md`
+- Entrega: `specs/<id>/entrega.md`
 
 ## Resumo
 <!-- 3 linhas: o que muda para o negócio -->
 
 ## Definição de pronto
 - [ ] G1 e G2 aprovados
-- [ ] `validate_naming.py` ok
-- [ ] `check_contracts.py` ok
-- [ ] `check_spec.py` ok
-- [ ] Testes unitários e casos de ouro passando
-- [ ] Reconciliação dentro da tolerância
+- [ ] `python scripts/gates.py` ok
+- [ ] Todas as tarefas encerradas (aprovado, nao_executar ou resolvido_fora com justificativa)
 - [ ] Relatório de QA: `specs/<id>/qa-report.md`
 - [ ] Parecer do Revisor sem bloqueios: `specs/<id>/review.md`
-- [ ] Docs e lineage atualizados
+- [ ] `entrega.md` e documentação atualizados
+- [ ] Itens do tipo da squad (`AGENTS.tipo.md`, seção Definição de pronto)
 
 ## Critérios de aceite
 | CA | Resultado |
@@ -23,13 +22,4 @@
 | CA-01 | ✅ |
 
 ## Custo estimado
-| Item | Estimativa |
-|------|------------|
-| Processamento por execução | |
-| Armazenamento/mês | |
-
-## Riscos e pontos de atenção
-<!-- o que o Operador deve olhar com cuidado -->
-
----
-🧍 **G3 — aprovação do Operador necessária para merge.**
+<!-- execução, ferramentas, mídia ou infraestrutura, conforme o tipo da squad -->

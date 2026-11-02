@@ -80,7 +80,19 @@ def checar_g3(feature: str) -> int:
             elif st != "aprovado" and len(nota) < 5:
                 erros.append(f"{tid}: '{st}' precisa de justificativa")
     return relatar("G3", erros)
-SECOES_SPEC = ["Regras de negócio", "Métricas", "Critérios de aceite", "Dúvidas abertas"]
+SECOES_PADRAO = ["Critérios de aceite", "Dúvidas abertas"]
+
+
+def secoes_spec() -> list[str]:
+    """Seções obrigatórias da spec para o tipo desta squad (.squad/tipo.yaml → spec.secoes)."""
+    caminho = ROOT / ".squad" / "tipo.yaml"
+    try:
+        import yaml  # type: ignore
+
+        dados = yaml.safe_load(caminho.read_text(encoding="utf-8")) or {}
+        return list((dados.get("spec") or {}).get("secoes") or SECOES_PADRAO)
+    except Exception:
+        return SECOES_PADRAO
 
 
 def duvidas_abertas(texto: str) -> list[str]:
@@ -118,7 +130,8 @@ def operadores() -> set[str]:
 
 def main() -> int:
     erros: list[str] = []
-    for pasta in sorted(p for p in (ROOT / "specs").iterdir() if p.is_dir()):
+    pastas = (ROOT / "specs").iterdir() if (ROOT / "specs").is_dir() else []
+    for pasta in sorted(p for p in pastas if p.is_dir()):
         spec, design, tasks = pasta / "spec.md", pasta / "design.md", pasta / "tasks.md"
         if not spec.exists():
             erros.append(f"{pasta.relative_to(ROOT)}: sem spec.md")
@@ -130,7 +143,7 @@ def main() -> int:
         status_spec = fm.get("status")
         if status_spec not in STATUS:
             erros.append(f"{rel}: status inválido '{status_spec}'")
-        for secao in SECOES_SPEC:
+        for secao in secoes_spec():
             if not re.search(rf"^## .*{re.escape(secao)}", texto, re.M):
                 erros.append(f"{rel}: seção obrigatória ausente: '{secao}'")
         erros += checar_aprovacao(rel, fm)

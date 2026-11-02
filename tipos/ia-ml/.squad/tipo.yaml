@@ -1,0 +1,40 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: ia-ml
+nome: IA e Machine Learning
+descricao: Modelos, LLMs, RAG e agentes, com avaliação, model card e riscos de IA responsável.
+
+rotulos:
+  g1: Spec
+  g2: Abordagem
+  g3: Entrega
+
+papeis:
+  especificacao: analista-requisitos
+  design: arquiteto-ml
+  orquestracao: orquestrador
+  documentacao: documentacao
+
+spec:
+  secoes: [Problema e uso, Métrica de sucesso, Dados disponíveis, Riscos e restrições, Critérios de aceite, Dúvidas abertas]
+
+validadores:
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+  - nome: IA (model card, avaliações, dados pessoais)
+    cmd: python scripts/check_ia.py
+    arquivos: [specs/**, modelos/**, avaliacoes/**, prompts/**]
+
+entrega:
+  pastas:
+    modelos/: Modelos e model cards
+    src/: Código
+    prompts/: Prompts
+    avaliacoes/: Avaliações
+    notebooks/: Notebooks
+    tests/: Testes
+    docs/: Documentação

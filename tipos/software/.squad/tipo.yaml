@@ -1,0 +1,38 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: software
+nome: Desenvolvimento de Software
+descricao: Funcionalidades, APIs e correções com histórias de usuário, arquitetura, código, testes e revisão.
+
+rotulos:
+  g1: Spec
+  g2: Arquitetura
+  g3: Release
+
+papeis:
+  especificacao: analista-requisitos
+  design: arquiteto-software
+  orquestracao: orquestrador
+  documentacao: documentacao
+
+spec:
+  secoes: [Histórias de usuário, Regras de negócio, Requisitos não funcionais, Critérios de aceite, Dúvidas abertas]
+
+validadores:
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+  - nome: Software (histórias, design, segredos)
+    cmd: python scripts/check_software.py
+    arquivos: [specs/**, src/**, app/**, infra/**, tests/**]
+
+entrega:
+  pastas:
+    src/: Código
+    app/: Aplicação
+    tests/: Testes
+    infra/: Infraestrutura
+    docs/: Documentação e ADRs

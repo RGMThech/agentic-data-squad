@@ -1,24 +1,18 @@
 #!/usr/bin/env python3
 """Hook PostToolUse: valida o arquivo recém-editado pelo agente.
 
-Recebe o evento em JSON pelo stdin. Se a validação falhar, sai com código 2 e
-escreve o motivo no stderr — o agente recebe a mensagem e deve corrigir antes
-de seguir.
+Recebe o evento em JSON pelo stdin e roda os validadores do tipo da squad que se
+aplicam ao arquivo (.squad/tipo.yaml). Se algum falhar, sai com código 2 e escreve
+o motivo no stderr: o agente recebe a mensagem e deve corrigir antes de seguir.
 """
 from __future__ import annotations
 
-import io
 import json
+import subprocess
 import sys
-from contextlib import redirect_stderr, redirect_stdout
 from pathlib import Path
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
-
-import check_contracts  # noqa: E402
-import check_spec  # noqa: E402
-import validate_naming  # noqa: E402
-from _common import ROOT  # noqa: E402
+ROOT = Path(__file__).resolve().parent.parent
 
 
 def main() -> int:
@@ -29,29 +23,10 @@ def main() -> int:
     caminho = (evento.get("tool_input") or {}).get("file_path")
     if not caminho:
         return 0
-    p = Path(caminho).resolve()
-    try:
-        topo = p.relative_to(ROOT).parts[0]
-    except (ValueError, IndexError):
-        return 0
-
-    verificacoes = []
-    if topo in {"pipelines", "contracts", "specs"}:
-        verificacoes.append(lambda: validate_naming.main([str(p)]))
-    if topo in {"pipelines", "contracts"}:
-        verificacoes.append(check_contracts.main)
-    if topo == "specs":
-        verificacoes.append(check_spec.main)
-
-    saida = io.StringIO()
-    falhou = False
-    with redirect_stdout(io.StringIO()), redirect_stderr(saida):
-        for v in verificacoes:
-            falhou |= v() != 0
-
-    if falhou:
+    r = subprocess.run([sys.executable, str(ROOT / "scripts" / "gates.py"), "--arquivo", caminho], cwd=ROOT, capture_output=True, text=True)
+    if r.returncode != 0:
         print("Harness bloqueou a alteração. Corrija antes de continuar:", file=sys.stderr)
-        print(saida.getvalue(), file=sys.stderr)
+        print((r.stdout + r.stderr)[-4000:], file=sys.stderr)
         return 2
     return 0
 

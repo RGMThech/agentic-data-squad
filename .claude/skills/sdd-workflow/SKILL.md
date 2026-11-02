@@ -1,24 +1,26 @@
 ---
 name: sdd-workflow
-description: Fluxo Spec-Driven Development da squad — como uma feature vai do pedido à produção, quem faz cada etapa e quais gates humanos existem. Use ao iniciar qualquer feature, ao decidir o próximo passo ou ao detectar mudança de escopo.
+description: Fluxo Spec-Driven Development da squad (qualquer tipo) — como uma feature vai do pedido à entrega, quem faz cada etapa e quais gates humanos existem. Use ao iniciar qualquer feature, ao decidir o próximo passo ou ao detectar mudança de escopo.
 ---
 
 # Fluxo SDD da squad
 
 ## Etapas
 
-| # | Etapa | Agente | Artefato | Saída para |
-|---|-------|--------|----------|------------|
-| 1 | Pedido | Operador | mensagem | analista-requisitos |
-| 2 | Especificação | analista-requisitos | `specs/<id>/spec.md` | **G1** |
-| 3 | Design | arquiteto-dados | `design.md`, `contracts/*.yaml`, ADRs | **G2** |
-| 4 | Planejamento | orquestrador | `tasks.md` | agentes executores |
-| 5 | Implementação | eng-ingestao, eng-transformacao, analytics-bi | `pipelines/**`, `semantic/**` | qa |
-| 6 | Qualidade | qa-data-quality | `qa-report.md` | autor (se falhar) ou revisor |
-| 7 | Revisão | revisor | `review.md` | governanca-docs |
-| 8 | Documentação | governanca-docs | `docs/**` | orquestrador |
-| 9 | Pull Request | orquestrador | PR | **G3** |
-| 10 | Deploy | CI/CD | — | produção |
+Os agentes de cada papel estão em `.squad/tipo.yaml` (papeis) e em `AGENTS.tipo.md`.
+
+| # | Etapa | Papel | Artefato | Saída para |
+|---|-------|-------|----------|------------|
+| 1 | Pedido | Operador | `specs/<id>/pedido.md` (console) | especificação |
+| 2 | Especificação | `papeis.especificacao` | `specs/<id>/spec.md` | **G1** |
+| 3 | Design / plano | `papeis.design` | `specs/<id>/design.md` (+ ADRs e artefatos do tipo) | **G2** |
+| 4 | Planejamento | `papeis.orquestracao` | `specs/<id>/tasks.md` | executores |
+| 5 | Execução | executores do tipo | artefatos do tipo | QA |
+| 6 | Qualidade | QA do tipo | `qa-report.md` | autor (se falhar) ou revisor |
+| 7 | Revisão | `revisor` | `review.md` | documentação |
+| 8 | Documentação | `papeis.documentacao` | `entrega.md`, `docs/**` | orquestração |
+| 9 | Pull Request | `papeis.orquestracao` | PR | **G3** |
+| 10 | Publicação | CI/CD ou Operador | — | produção / canais |
 
 ## Cabeçalho de status (spec e design)
 

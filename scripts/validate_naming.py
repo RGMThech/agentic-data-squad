@@ -85,7 +85,7 @@ def coletar(arquivos: list[Path] | None) -> list[str]:
     for p in sorted((ROOT / "contracts").glob("*")):
         if p.is_file():
             erros += validar_contrato_nome(p)
-    for p in sorted((ROOT / "specs").iterdir()):
+    for p in sorted((ROOT / "specs").glob("*")):
         if p.is_dir():
             erros += validar_spec_dir(p)
     return erros

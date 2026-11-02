@@ -99,7 +99,7 @@ Acionado por: {ator}.
 - Não faça git commit, push, merge nem abra PR: o workflow cuida disso.
 - Não há humano disponível para perguntas agora. Se precisar de decisão do Operador,
   registre no artefato (por exemplo, em "Dúvidas abertas" da spec) e encerre.
-- Antes de terminar, rode: python scripts/validate_naming.py && python scripts/check_contracts.py && python scripts/check_spec.py
+- Antes de terminar, rode: python scripts/gates.py
 - Termine com um resumo de no máximo 8 linhas: o que fez, arquivos alterados e decisões pendentes para o Operador.
 """
 

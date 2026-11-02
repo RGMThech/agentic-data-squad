@@ -14,9 +14,8 @@ Status: `pendente` | `em_andamento` | `em_qa` | `reprovado` | `bloqueado` | `apr
 
 | ID | Tarefa | Agente | Depende de | Entradas | Saída | Critério de pronto | Ciclos QA | Status |
 |----|--------|--------|------------|----------|-------|--------------------|-----------|--------|
-| T-01 |  | eng-ingestao | — |  |  |  | 0 | pendente |
-| T-02 |  | eng-transformacao | T-01 |  |  |  | 0 | pendente |
-| T-03 |  | analytics-bi | T-02 |  |  |  | 0 | pendente |
+| T-01 |  | <agente> | — |  |  |  | 0 | pendente |
+| T-02 |  | <agente> | T-01 |  |  |  | 0 | pendente |
 
 ## Bloqueios e escalonamentos
 | Data | Tarefa | Motivo | Encaminhamento |

@@ -1,0 +1,38 @@
+# Tipo desta squad — lido pelo Squad Console, pelos workflows e pelos validadores.
+# Não edite à mão: vem do pacote do tipo escolhido na criação da squad.
+tipo: atendimento
+nome: Atendimento / CX
+descricao: Base de conhecimento, fluxos de atendimento e chatbot, macros e análise de tickets.
+
+rotulos:
+  g1: Spec
+  g2: Jornada
+  g3: Publicação
+
+papeis:
+  especificacao: analista-cx
+  design: arquiteto-cx
+  orquestracao: orquestrador
+  documentacao: documentacao
+
+spec:
+  secoes: [Problema, Motivos de contato, Canais, Indicadores, Critérios de aceite, Dúvidas abertas]
+
+validadores:
+  - nome: Gates G1/G2
+    cmd: python scripts/check_spec.py
+    arquivos: [specs/**]
+  - nome: Coerência do tipo
+    cmd: python scripts/check_tipo.py
+    arquivos: [.squad/**, .claude/**, templates/**]
+  - nome: Atendimento (artigos, fluxos, macros)
+    cmd: python scripts/check_atendimento.py
+    arquivos: [kb/**, fluxos/**, macros/**, analises/**, specs/**]
+
+entrega:
+  pastas:
+    kb/: Base de conhecimento
+    fluxos/: Fluxos e chatbot
+    macros/: Macros e respostas
+    analises/: Análises de tickets
+    docs/: Políticas e documentação

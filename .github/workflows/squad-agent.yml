@@ -138,7 +138,7 @@ jobs:
         id: validadores
         if: always() && steps.executar.outcome != 'skipped'
         run: |
-          if python scripts/validate_naming.py && python scripts/check_contracts.py && python scripts/check_spec.py; then
+          if python scripts/gates.py; then
             echo "VALIDADORES=ok" >> "$GITHUB_ENV"
           else
             echo "VALIDADORES=falhou" >> "$GITHUB_ENV"
