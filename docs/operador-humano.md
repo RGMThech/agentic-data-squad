@@ -79,7 +79,7 @@ Não corrija o código você mesmo. Pergunte: **qual regra teria evitado isso?**
 | Regra de negócio mal interpretada | template da spec (nova pergunta obrigatória) |
 | Padrão de código ruim | `AGENTS.md` ou skill |
 | Bug de dado | novo caso de ouro em `tests/golden/` |
-| Convenção ignorada | `validate_naming.py` ou `check_contracts.py` |
+| Convenção ignorada | um validador do tipo (declarado em `.squad/tipo.yaml`, roda com `python scripts/gates.py`) |
 | Agente fora do escopo | `tools` e instruções em `.claude/agents/<agente>.md` |
 
 Registre em `docs/licoes-aprendidas.md`.
